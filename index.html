@@ -1,176 +1,996 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-    <title>NKAP EXPRESS</title>
-    <!-- On garde tes styles ici (ils sont parfaits) -->
-    <style>
-        *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-        body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;font-family:sans-serif;overflow:hidden}
-        #NK{background:#0d0d0d;color:#e5e5e5;height:100vh;display:flex;flex-direction:column;position:relative;width:100%;max-width:480px;border:1px solid #1a1a1a}
+    <m<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>NKAP EXPRESS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;font-family:sans-serif}
+#NK{background:#0d0d0d;color:#e5e5e5;min-height:100vh;display:flex;flex-direction:column;position:relative;width:100%;max-width:480px;border:1px solid #1a1a1a}
 
-        /* VERROU SERVEUR */
-        #srv-lock{position:fixed;inset:0;background:#080808;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:2rem}
-        .lock-logo{font-size:2rem;font-weight:700;color:#f0b90b;letter-spacing:3px}
-        .cd-box{background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:1.5rem 2.5rem;text-align:center}
-        .cd-num{font-size:4rem;font-weight:700;color:#f0b90b}
-        .pulse{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* ═══ VERROU SERVEUR ═══ */
+#srv-lock{position:fixed;inset:0;background:#080808;z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:2rem}
+.lock-logo{font-size:2rem;font-weight:700;color:#f0b90b;letter-spacing:3px}
+.lock-sub{font-size:.65rem;color:#444;letter-spacing:5px;text-transform:uppercase}
+.srv-status{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:#555}
+.pulse{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.cd-box{background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:1.5rem 2.5rem;text-align:center;min-width:200px}
+.cd-label{font-size:.6rem;color:#444;text-transform:uppercase;letter-spacing:2px;margin-bottom:.75rem}
+.cd-num{font-size:4rem;font-weight:700;color:#f0b90b;line-height:1;font-variant-numeric:tabular-nums}
+.cd-unit{font-size:.65rem;color:#444;margin-top:.4rem}
+.srv-msg{font-size:.75rem;color:#444;text-align:center;max-width:260px;line-height:1.6}
+.open-anim{display:none;flex-direction:column;align-items:center;gap:.75rem}
+.open-circle{width:80px;height:80px;border-radius:50%;background:#f0b90b;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:popIn .4s ease}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
 
-        /* AUTH */
-        #auth{position:fixed;inset:0;background:#0d0d0d;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem}
-        .pd{width:14px;height:14px;border-radius:50%;border:2px solid #2a2a2a;transition:0.2s}
-        .pd.on{background:#f0b90b;border-color:#f0b90b}
-        .ppad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-        .pb{background:#181818;border:1px solid #222;color:white;padding:15px;border-radius:10px;font-size:1.2rem}
+/* ═══ AUTH ═══ */
+#auth{position:fixed;inset:0;background:#0d0d0d;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1rem}
+.auth-logo{font-size:1.8rem;font-weight:700;color:#f0b90b;letter-spacing:2px}
+.auth-sub{font-size:.65rem;color:#444;letter-spacing:4px}
+.auth-box{background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:1.5rem;width:100%;max-width:300px;text-align:center}
+.auth-title{font-size:.78rem;color:#777;margin-bottom:.1rem}
+.auth-name{font-size:.7rem;color:#f0b90b;margin-bottom:1rem;min-height:.9rem}
+.pdots{display:flex;gap:10px;justify-content:center;margin-bottom:1.2rem}
+.pd{width:14px;height:14px;border-radius:50%;border:2px solid #2a2a2a;transition:all .2s}
+.pd.on{background:#f0b90b;border-color:#f0b90b;transform:scale(1.1)}
+.ppad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:190px;margin:0 auto}
+.pb{background:#181818;border:1px solid #222;color:#e5e5e5;font-size:1.05rem;font-weight:500;border-radius:9px;padding:13px;cursor:pointer;transition:background .12s,transform .1s}
+.pb:active{background:#2a2a2a;transform:scale(.95)}
+.pb.del{color:#ef4444}
+.pb.ok{color:#f0b90b;font-weight:700}
+.aerr{color:#ef4444;font-size:.72rem;margin-top:.7rem;min-height:.9rem}
+.auth-info{font-size:.65rem;color:#333;margin-top:.4rem}
 
-        /* HEADER & CONTENT */
-        #hdr{background:#0f0f0f;padding:10px 20px;display:flex;justify-content:space-between;border-bottom:1px solid #1a1a1a}
-        .bal-val{color:#f0b90b;font-weight:bold}
-        #content{flex:1;display:flex;flex-direction:column;padding:10px}
-        .numgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
-        .ngb{background:#111;border:1px solid #222;padding:20px;border-radius:10px;color:white;font-size:1.2rem}
-        .ngb.sel{border-color:#f0b90b;background:#1a1500}
+/* ═══ HEADER ═══ */
+#hdr{background:#0f0f0f;border-bottom:1px solid #1a1a1a;padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.live{display:flex;align-items:center;gap:5px;font-size:.65rem;color:#ef4444;font-weight:700;letter-spacing:.5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.tring{position:relative;width:46px;height:46px}
+.tring svg{transform:rotate(-90deg)}
+.tring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#f0b90b}
+.bal-box{text-align:right}
+.bal-lbl{font-size:.58rem;color:#444}
+.bal-val{font-size:.9rem;font-weight:700;color:#f0b90b}
+
+/* ═══ HISTBAR ═══ */
+#histbar{background:#0f0f0f;border-bottom:1px solid #171717;padding:.35rem .75rem;display:flex;align-items:center;gap:7px;flex-shrink:0;overflow:hidden}
+.hl{font-size:.6rem;color:#444;white-space:nowrap;flex-shrink:0}
+.hnums{display:flex;gap:4px;overflow:hidden;flex:1;position:relative}
+.hn{min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;flex-shrink:0;color:#fff;cursor:pointer;position:relative;transition:transform .2s}
+.hn:hover{transform:scale(1.2);z-index:5}
+.hn-tip{display:none;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid #2a2a2a;border-radius:7px;padding:.3rem .6rem;font-size:.6rem;color:#ccc;white-space:nowrap;z-index:20;pointer-events:none}
+.hn:hover .hn-tip{display:block}
+
+/* ═══ BET TABLE ═══ */
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+#bet-panel{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.bstats{display:flex;align-items:center;justify-content:space-between;padding:.35rem .75rem;background:#0f0f0f;border-bottom:1px solid #171717;flex-wrap:wrap;gap:3px}
+.bs{font-size:.65rem;color:#666}
+.bs span{color:#f0b90b;font-weight:600}
+.bet-head{display:grid;grid-template-columns:1fr 68px 44px;padding:.35rem .75rem;background:#131313;font-size:.6rem;color:#444;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+.bscroll{flex:1;overflow-y:auto;max-height:280px}
+.brow{display:grid;grid-template-columns:1fr 68px 44px;padding:.38rem .75rem;border-bottom:1px solid #131313;font-size:.73rem;animation:rowIn .2s ease}
+@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.brow.real{background:#170f00;border-left:3px solid #f0b90b}
+.pcell{display:flex;align-items:center;gap:5px;overflow:hidden}
+.pn{color:#bbb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.72rem}
+.mc{color:#22c55e;font-weight:600;text-align:right;font-size:.68rem}
+.nc{text-align:center}
+.nb2{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;font-size:.58rem;font-weight:700;color:#fff}
+
+/* ═══ WHEEL ═══ */
+#wheel-panel{display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;gap:1rem;flex:1}
+.wlbl{font-size:.65rem;color:#444;letter-spacing:2px;text-transform:uppercase}
+.wheel-wrap{position:relative;width:200px;height:200px}
+.wptr{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:19px solid #f0b90b}
+.wnum{font-size:3rem;font-weight:700;color:#f0b90b;transition:opacity .35s}
+
+/* ═══ PODIUM ═══ */
+#pod-panel{display:none;flex-direction:column;align-items:center;padding:1rem;gap:.5rem;flex:1}
+.pod-title{font-size:.65rem;color:#666;text-transform:uppercase;letter-spacing:2px}
+.pod-num{font-size:2.2rem;font-weight:700;margin:.25rem 0}
+.wcard{background:#120f00;border:1px solid #f0b90b;border-radius:9px;padding:.55rem .9rem;width:100%;max-width:300px;display:flex;align-items:center;gap:8px;animation:glow 1.4s infinite}
+@keyframes glow{0%,100%{border-color:#f0b90b}50%{border-color:#b38700}}
+.wcard-name{font-size:.82rem;font-weight:600;color:#fde68a}
+.wcard-det{font-size:.62rem;color:#666}
+
+/* ═══ LEADERBOARD ═══ */
+#lb-panel{display:none;flex-direction:column;padding:.75rem;gap:.4rem;flex:1;overflow-y:auto}
+.lb-title{font-size:.75rem;color:#f0b90b;font-weight:600;text-align:center;margin-bottom:.5rem}
+.lb-row{display:flex;align-items:center;gap:.6rem;padding:.4rem .6rem;background:#111;border-radius:8px;font-size:.73rem}
+.lb-rank{font-size:.85rem;min-width:24px}
+.lb-name{flex:1;color:#ccc}
+.lb-gain{color:#22c55e;font-weight:600}
+
+/* ═══ NAV ═══ */
+#nav{background:#0f0f0f;border-top:1px solid #1a1a1a;display:flex;align-items:center;flex-shrink:0;position:sticky;bottom:0}
+.nvb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .2rem;cursor:pointer;gap:2px;border:none;background:transparent;color:#444;font-size:.5rem;text-transform:uppercase;letter-spacing:.4px;transition:color .15s}
+.nvb:hover{color:#f0b90b}
+.nvb .ico{font-size:15px}
+.nvb.cbtn{flex:1.4;background:#f0b90b;color:#0d0d0d;border-radius:10px;margin:.28rem .12rem;font-weight:700;font-size:.55rem}
+.nvb.cbtn:hover{background:#d4a00a}
+
+/* ═══ OVERLAY ═══ */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1rem}
+.obox{background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:1.4rem;width:100%;max-width:320px;max-height:85vh;overflow-y:auto;position:relative}
+.otitle{font-size:.85rem;font-weight:600;color:#f0b90b;margin-bottom:.9rem;text-align:center}
+.ocls{position:absolute;top:.7rem;right:.7rem;background:none;border:none;color:#444;font-size:1rem;cursor:pointer}
+.inp{width:100%;background:#181818;border:1px solid #222;border-radius:8px;padding:9px 11px;color:#e5e5e5;font-size:.83rem;margin-bottom:.55rem;outline:none;-webkit-appearance:none}
+.inp:focus{border-color:#f0b90b}
+.oerr{font-size:.7rem;min-height:.9rem;margin-bottom:.35rem}
+.oerr.err{color:#ef4444}
+.oerr.ok{color:#22c55e}
+.obtn{width:100%;padding:10px;border-radius:8px;border:none;background:#f0b90b;color:#0d0d0d;font-weight:700;font-size:.82rem;cursor:pointer;margin-top:.2rem;transition:background .15s}
+.obtn:hover{background:#d4a00a}
+.numgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:.6rem 0}
+.ngb{padding:9px 0;border-radius:7px;border:2px solid transparent;font-size:.95rem;font-weight:700;cursor:pointer;text-align:center;color:#fff;transition:all .15s}
+.ngb.sel{border-color:#f0b90b;transform:scale(1.1)}
+.tab2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.7rem}
+.tabo{padding:9px;border-radius:8px;border:1px solid #222;background:#181818;color:#666;cursor:pointer;text-align:center;font-size:.76rem;transition:all .15s}
+.tabo.active{background:#f0b90b;color:#0d0d0d;border-color:#f0b90b;font-weight:700}
+.hist-row{display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid #1a1a1a;font-size:.73rem}
+.hbadge{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0}
+.hinfo{flex:1;overflow:hidden}
+.hname{color:#bbb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.7rem}
+.hsolde{color:#f0b90b;font-size:.62rem}
+.heure{color:#333;font-size:.58rem;flex-shrink:0}
+.tut{background:#0d0d0d;border-radius:8px;padding:.65rem;margin-bottom:.45rem;display:flex;gap:.65rem}
+.tut-n{min-width:22px;height:22px;border-radius:50%;background:#f0b90b;color:#0d0d0d;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tut-t{font-size:.72rem;color:#888;line-height:1.5}
+.banner{position:fixed;top:70px;left:50%;transform:translateX(-50%);padding:.45rem 1.1rem;border-radius:20px;font-weight:700;font-size:.75rem;z-index:300;white-space:nowrap;animation:rowIn .25s ease;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="NK">
+
+<!-- ═══ VERROU SERVEUR ═══ -->
+<div id="srv-lock">
+  <div class="lock-logo">NKAP EXPRESS</div>
+  <div class="lock-sub">Casino Mondial</div>
+  <div class="srv-status" id="srv-status">
+    <div class="pulse"></div>
+    <span id="srv-msg-top">Connexion au serveur...</span>
+  </div>
+  <div class="cd-box" id="cd-box">
+    <div class="cd-label">Ouverture dans</div>
+    <div class="cd-num" id="cd-num">--</div>
+    <div class="cd-unit">secondes</div>
+  </div>
+  <div class="srv-msg" id="srv-msg-bot">
+    Le serveur détermine l'heure d'ouverture.<br>Veuillez patienter.
+  </div>
+  <div class="open-anim" id="open-anim">
+    <div class="open-circle">🎰</div>
+    <div style="color:#f0b90b;font-weight:700;font-size:.9rem">Casino ouvert !</div>
+  </div>
+</div>
+
+<!-- ═══ AUTH ═══ -->
+<div id="auth">
+  <div class="auth-logo">NKAP EXPRESS</div>
+  <div class="auth-sub">Identification sécurisée</div>
+  <div class="auth-box">
+    <div class="auth-title">Entrez votre code secret</div>
+    <div class="auth-name" id="auth-name"></div>
+    <div class="pdots">
+      <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div><div class="pd" id="pd4"></div>
+    </div>
+    <div class="ppad">
+      <button class="pb" onclick="ap('1')">1</button><button class="pb" onclick="ap('2')">2</button><button class="pb" onclick="ap('3')">3</button>
+      <button class="pb" onclick="ap('4')">4</button><button class="pb" onclick="ap('5')">5</button><button class="pb" onclick="ap('6')">6</button>
+      <button class="pb" onclick="ap('7')">7</button><button class="pb" onclick="ap('8')">8</button><button class="pb" onclick="ap('9')">9</button>
+      <button class="pb del" onclick="dp()">&#9003;</button><button class="pb" onclick="ap('0')">0</button>
+      <button class="pb ok" onclick="doAuth()">OK</button>
+    </div>
+    <div class="aerr" id="aerr"></div>
+    <div class="auth-info" id="auth-info">Vérification via le serveur bot</div>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<div id="hdr">
+  <div class="live"><div class="dot"></div>EN DIRECT</div>
+  <div class="tring">
+    <svg width="46" height="46" viewBox="0 0 46 46">
+      <circle cx="23" cy="23" r="19" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle id="ring" cx="23" cy="23" r="19" fill="none" stroke="#22c55e" stroke-width="4"
+        stroke-dasharray="119.38" stroke-dashoffset="0" stroke-linecap="round"
+        style="transition:stroke-dashoffset .9s linear,stroke .3s"/>
+    </svg>
+    <div class="tring-inner" id="tnum">15</div>
+  </div>
+  <div class="bal-box">
+    <div class="bal-lbl">SOLDE</div>
+    <div class="bal-val" id="bal">— XAF</div>
+  </div>
+</div>
+
+<!-- ═══ HISTBAR ═══ -->
+<div id="histbar">
+  <span class="hl">Résultats:</span>
+  <div class="hnums" id="hnums"></div>
+</div>
+
+<!-- ═══ CONTENU ═══ -->
+<div id="content">
+  <div id="bet-panel">
+    <div class="bstats">
+      <div class="bs">Joueurs: <span id="pcount">0</span></div>
+      <div class="bs">Total: <span id="totalmise">0</span> XAF</div>
+      <div class="bs" id="phasebadge" style="color:#f0b90b;font-size:.65rem">MISES OUVERTES</div>
+    </div>
+    <div class="bet-head"><span>Joueur</span><span style="text-align:right">Mise</span><span style="text-align:center">N°</span></div>
+    <div class="bscroll" id="bscroll"></div>
+  </div>
+  <div id="wheel-panel">
+    <div class="wlbl">Tirage en cours</div>
+    <div class="wheel-wrap"><canvas id="wcanvas" width="200" height="200"></canvas><div class="wptr"></div></div>
+    <div class="wnum" id="wnum" style="opacity:0">—</div>
+  </div>
+  <div id="pod-panel">
+    <div class="pod-title">Numéro gagnant</div>
+    <div class="pod-num" id="pod-num">—</div>
+    <div id="winners" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:.4rem;max-height:230px;overflow-y:auto"></div>
+  </div>
+  <div id="lb-panel">
+    <div class="lb-title">🏆 Classement du Jour</div>
+    <div id="lb-rows"></div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<div id="nav">
+  <button class="nvb" onclick="openPanel('histo')"><span class="ico">📊</span>HISTO</button>
+  <button class="nvb" onclick="openPanel('banque')"><span class="ico">💳</span>BANQUE</button>
+  <button class="nvb cbtn" onclick="openPanel('mise')"><span class="ico" style="font-size:17px">💰</span>MISER</button>
+  <button class="nvb" onclick="openPanel('amis')"><span class="ico">👥</span>AMIS</button>
+  <button class="nvb" onclick="showLB()"><span class="ico">🏆</span>TOP</button>
+</div>
+
+<!-- ═══ OVERLAY ═══ -->
+<div class="ov" id="ov">
+  <div style="position:relative;width:100%;max-width:320px">
+    <button class="ocls" onclick="closeOv()">✕</button>
+    <div class="obox" id="ovbox"></div>
+  </div>
+</div>
+
+</div><!-- #NK -->
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG — une seule ligne à modifier
+// ═══════════════════════════════════════════════════
+const API = "https://sworn-compacter-dental.ngrok-free.dev"; 
+  // ← URL de votre serveur bot
+
+// ═══════════════════════════════════════════════════
+//  CONSTANTES
+// ═══════════════════════════════════════════════════
+const NC  = ["#374151","#2563eb","#059669","#d97706","#7c3aed","#dc2626"];
+const CIRC = 2*Math.PI*19;
+const MEDALS = ["🥇","🥈","🥉","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
+
+// ═══════════════════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════════════════
+let userId=null, userPin="", userName="", bal=0;
+let hist=[], histFull=[];
+let phase="betting", wAngle=0, wAnimId=null;
+let timerV=15, timerInt=null;
+let lastTourId="", lastPhase="";
+let botsShown=new Set(), realBetDone=false;
+let selectedNum=-1, bankTab="depot";
+let totalMise=0, totalJoueurs=0;
+let serverOpen=false, openKey="";
+let pollingInt=null;
+
+// ═══════════════════════════════════════════════════
+//  TELEGRAM WebApp
+// ═══════════════════════════════════════════════════
+if(window.Telegram?.WebApp){
+  const tg=window.Telegram.WebApp;
+  tg.expand();
+  const u=tg.initDataUnsafe?.user;
+  if(u){userId=u.id; userName=u.first_name||"";}
+}
+if(!userId){userId=100000001; userName="Test";}
+document.getElementById("auth-name").textContent=userName?`Joueur: ${userName}`:"";
+
+// ═══════════════════════════════════════════════════
+//  ÉTAPE 1 — VERROU SERVEUR
+//  Le site interroge le bot toutes les 2s
+// ═══════════════════════════════════════════════════
+async function checkServerStatus(){
+  try{
+    const r=await fetch(`${API}/api/server_status`,{cache:"no-store"});
+    const d=await r.json();
+    const cd=document.getElementById("cd-num");
+    const topMsg=document.getElementById("srv-msg-top");
+
+    if(d.open && d.open_key){
+      // ✅ Serveur a autorisé l'ouverture
+      serverOpen=true; openKey=d.open_key;
+      clearInterval(srvPoll);
+      // Animation d'ouverture
+      document.getElementById("cd-box").style.display="none";
+      document.getElementById("srv-msg-bot").style.display="none";
+      const oa=document.getElementById("open-anim");
+      oa.style.display="flex";
+      topMsg.textContent="Bienvenue !";
+      setTimeout(()=>{
+        document.getElementById("srv-lock").style.display="none";
+        showAuth();
+      },1200);
+    } else if(d.countdown>0){
+      // ⏳ Compteur
+      cd.textContent=d.countdown;
+      topMsg.textContent="Ouverture prévue...";
+    } else {
+      // 🔒 Fermé
+      cd.textContent="—";
+      topMsg.textContent="Site temporairement fermé";
+      document.getElementById("srv-msg-bot").textContent="L'administrateur ouvrira le casino bientôt.";
+    }
+  } catch(e){
+    document.getElementById("srv-msg-top").textContent="Connexion...";
+  }
+}
+const srvPoll=setInterval(checkServerStatus,2000);
+checkServerStatus();
+
+function showAuth(){
+  document.getElementById("auth").style.display="flex";
+}
+
+// ═══════════════════════════════════════════════════
+//  ÉTAPE 2 — AUTH PIN (vérifié par le bot)
+// ═══════════════════════════════════════════════════
+let pinv="";
+function ap(d){if(pinv.length>=5)return;pinv+=d;updPd();if(pinv.length===5)setTimeout(doAuth,150);}
+function dp(){pinv=pinv.slice(0,-1);updPd();}
+function updPd(){for(let i=0;i<5;i++)document.getElementById("pd"+i).classList.toggle("on",i<pinv.length);}
+
+async function doAuth(){
+  const err=document.getElementById("aerr");
+  const info=document.getElementById("auth-info");
+  if(pinv.length!==5){err.textContent="5 chiffres requis";pinv="";updPd();return;}
+  err.textContent="";info.textContent="Vérification en cours...";
+  try{
+    const res=await fetch(`${API}/api/auth`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:pinv})
+    });
+    const data=await res.json();
+    if(data.success){
+      userPin=pinv;
+      bal=data.solde||0;
+      if(data.custom_name) userName=data.custom_name;
+      histFull=data.history_full||[];
+      hist=data.history_nums||[];
+      document.getElementById("auth").style.display="none";
+      fmtBal(); renderHist();
+      startPolling();
+      showBet();
+    } else {
+      err.textContent=data.message||"Code incorrect";
+      pinv="";updPd();
+      info.textContent="Vérification via le serveur bot";
+    }
+  } catch(e){
+    err.textContent="Serveur indisponible.";
+    pinv="";updPd();
+    info.textContent="Vérification via le serveur bot";
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  POLLING — synchronisation continue
+// ═══════════════════════════════════════════════════
+function startPolling(){
+  fetchState();
+  pollingInt=setInterval(fetchState,2000);
+}
+
+async function fetchState(){
+  try{
+    const res=await fetch(`${API}/api/state?user_id=${userId}`,{cache:"no-store"});
+    const d=await res.json();
+    // Synchronisation solde
+    if(d.solde!==undefined){bal=d.solde;fmtBal();}
+    // Synchronisation historique (MÊME source que le bot)
+    if(d.history_full?.length){histFull=d.history_full;hist=d.history_nums||[];renderHist();}
+    syncPhase(d);
+  } catch(e){}
+}
+
+function syncPhase(d){
+  const p=d.phase, tid=d.tour_id;
+
+  if(tid!==lastTourId){
+    lastTourId=tid; botsShown.clear(); realBetDone=false;
+    resetTable();
+  }
+
+  // Afficher bots non encore affichés
+  (d.bots||[]).forEach(b=>{
+    const k=b.flag+b.name+b.mise+b.num;
+    if(!botsShown.has(k)){botsShown.add(k);addRow(b);}
+  });
+  document.getElementById("pcount").textContent=d.total_players||0;
+
+  if(p==="betting"){
+    if(lastPhase!=="betting"){
+      lastPhase="betting"; timerV=15;
+      if(timerInt)clearInterval(timerInt);
+      showBet();
+      document.getElementById("phasebadge").textContent="MISES OUVERTES";
+      startTimerLocal();
+    }
+  } else if(p==="result"){
+    if(lastPhase!=="result"){
+      lastPhase="result";
+      if(timerInt){clearInterval(timerInt);timerInt=null;}
+      const win=d.win_number;
+      if(win!==null&&win!==undefined) startResultAnim(win);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  TIMER LOCAL (approximatif — synchronisé par polling)
+// ═══════════════════════════════════════════════════
+function startTimerLocal(){
+  const ring=document.getElementById("ring");
+  ring.style.stroke="#22c55e";
+  ring.style.strokeDashoffset="0";
+  document.getElementById("tnum").textContent="15";
+  timerInt=setInterval(()=>{
+    timerV--;
+    document.getElementById("tnum").textContent=Math.max(0,timerV);
+    ring.style.strokeDashoffset=CIRC*(1-Math.max(0,timerV)/15);
+    if(timerV<=5)ring.style.stroke="#ef4444";
+    else if(timerV<=9)ring.style.stroke="#f59e0b";
+  },1000);
+}
+
+// ═══════════════════════════════════════════════════
+//  ANIMATION RÉSULTAT
+// ═══════════════════════════════════════════════════
+function startResultAnim(win){
+  document.getElementById("phasebadge").textContent="TIRAGE EN COURS";
+  showWheel(); drawW(wAngle);
+  document.getElementById("wnum").style.opacity="0";
+  setTimeout(()=>{
+    spinTo(win,()=>{
+      const el=document.getElementById("wnum");
+      el.textContent=win;el.style.color=NC[win];el.style.opacity="1";
+      setTimeout(()=>showPodiumResult(win),700);
+    });
+  },300);
+}
+
+function showPodiumResult(win){
+  showPodium();
+  document.getElementById("pod-num").textContent=win;
+  document.getElementById("pod-num").style.color=NC[win];
+  // Gagnants réels (depuis histFull — même source que le bot)
+  const last=histFull[0];
+  const wlist=document.getElementById("winners");
+  wlist.innerHTML="";
+  if(last&&last.winner_name){
+    const c=document.createElement("div");c.className="wcard";
+    c.innerHTML=`<span style="font-size:16px">🥇</span>
+      <div>
+        <div class="wcard-name">${last.winner_name}</div>
+        <div class="wcard-det">Solde: ${last.winner_solde?Math.round(last.winner_solde).toLocaleString():"—"} XAF · N°${win}</div>
+      </div>`;
+    wlist.appendChild(c);
+  } else {
+    wlist.innerHTML=`<div style="color:#444;font-size:.78rem;padding:.75rem">Aucun gagnant ce tour</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  TABLE DES MISES
+// ═══════════════════════════════════════════════════
+function addRow(p,prepend=false){
+  const body=document.getElementById("bscroll");
+  const row=document.createElement("div");
+  row.className="brow"+(p.real?" real":"");
+  const nb=`<span class="nb2" style="background:${NC[p.num]}">${p.num}</span>`;
+  row.innerHTML=`<div class="pcell"><span style="font-size:13px">${p.flag||"🌍"}</span><span class="pn">${p.real?"⭐ "+p.name:p.name}</span></div><div class="mc">${(p.mise||0).toLocaleString()}</div><div class="nc">${nb}</div>`;
+  if(prepend&&body.firstChild)body.insertBefore(row,body.firstChild);
+  else body.appendChild(row);
+  if(!prepend)body.scrollTop=body.scrollHeight;
+  totalMise+=p.mise; totalJoueurs++;
+  document.getElementById("totalmise").textContent=Math.round(totalMise).toLocaleString();
+}
+
+function resetTable(){
+  document.getElementById("bscroll").innerHTML="";
+  totalMise=0;totalJoueurs=0;
+  document.getElementById("totalmise").textContent="0";
+  document.getElementById("pcount").textContent="0";
+}
+
+// ═══════════════════════════════════════════════════
+//  ROUE
+// ═══════════════════════════════════════════════════
+function drawW(ang){
+  const cv=document.getElementById("wcanvas"),cx=cv.getContext("2d"),c=100,r=96;
+  cx.clearRect(0,0,200,200);
+  for(let i=0;i<6;i++){
+    const s=ang+i*Math.PI*2/6,e=s+Math.PI*2/6;
+    cx.beginPath();cx.moveTo(c,c);cx.arc(c,c,r,s,e);cx.closePath();
+    cx.fillStyle=NC[i];cx.fill();cx.strokeStyle="#0d0d0d";cx.lineWidth=2;cx.stroke();
+    cx.save();cx.translate(c,c);cx.rotate(s+Math.PI/6);cx.translate(r*.64,0);cx.rotate(Math.PI/2);
+    cx.fillStyle="#fff";cx.font="bold 18px sans-serif";cx.textAlign="center";cx.textBaseline="middle";
+    cx.fillText(String(i),0,0);cx.restore();
+  }
+  cx.beginPath();cx.arc(c,c,11,0,Math.PI*2);cx.fillStyle="#0d0d0d";cx.fill();
+  cx.strokeStyle="#f0b90b";cx.lineWidth=2;cx.stroke();
+}
+
+function spinTo(target,cb){
+  const sl=Math.PI*2/6,sp=5;
+  const tgt=-Math.PI/2-(target*sl+sl/2);
+  const tot=Math.PI*2*sp+((tgt-wAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  const dur=3700,t0=performance.now(),sa=wAngle;
+  function fr(now){
+    const t=Math.min((now-t0)/dur,1),e=1-Math.pow(1-t,4);
+    wAngle=sa+tot*e;drawW(wAngle);
+    if(t<1)wAnimId=requestAnimationFrame(fr);
+    else{wAngle=sa+tot;drawW(wAngle);if(cb)cb();}
+  }
+  wAnimId=requestAnimationFrame(fr);
+}
+
+// ═══════════════════════════════════════════════════
+//  AFFICHAGE PANNEAUX
+// ═══════════════════════════════════════════════════
+function showBet(){
+  document.getElementById("bet-panel").style.display="flex";
+  document.getElementById("wheel-panel").style.display="none";
+  document.getElementById("pod-panel").style.display="none";
+  document.getElementById("lb-panel").style.display="none";
+  resetTable();
+}
+function showWheel(){
+  document.getElementById("bet-panel").style.display="none";
+  document.getElementById("wheel-panel").style.display="flex";
+  document.getElementById("pod-panel").style.display="none";
+  document.getElementById("lb-panel").style.display="none";
+}
+function showPodium(){
+  document.getElementById("bet-panel").style.display="none";
+  document.getElementById("wheel-panel").style.display="none";
+  document.getElementById("pod-panel").style.display="flex";
+  document.getElementById("lb-panel").style.display="none";
+}
+async function showLB(){
+  document.getElementById("bet-panel").style.display="none";
+  document.getElementById("wheel-panel").style.display="none";
+  document.getElementById("pod-panel").style.display="none";
+  document.getElementById("lb-panel").style.display="flex";
+  try{
+    const r=await fetch(`${API}/api/leaderboard`);
+    const data=await r.json();
+    const rows=document.getElementById("lb-rows");
+    rows.innerHTML="";
+    if(!data.length){rows.innerHTML=`<div style="color:#444;font-size:.75rem;text-align:center;padding:1rem">Aucun gagnant aujourd'hui encore.</div>`;return;}
+    data.forEach((p,i)=>{
+      const d=document.createElement("div");d.className="lb-row";
+      const nom=p.custom_name||p.tg_name||"?";
+      d.innerHTML=`<span class="lb-rank">${MEDALS[i]||i+1}</span><span class="lb-name">${nom}</span><span class="lb-gain">${Math.round(p.gains_jour).toLocaleString()} XAF</span>`;
+      rows.appendChild(d);
+    });
+  } catch(e){document.getElementById("lb-rows").innerHTML=`<div style="color:#ef4444;font-size:.7rem;text-align:center">Erreur chargement</div>`;}
+}
+
+function fmtBal(){document.getElementById("bal").textContent=Math.round(bal).toLocaleString()+" XAF";}
+
+function renderHist(){
+  // ═══ MÊME source que le bot (histFull) ═══
+  document.getElementById("hnums").innerHTML=hist.slice(0,20).map((n,i)=>{
+    const h=histFull[i]||{};
+    const nom=h.winner_name||"";
+    const sol=h.winner_solde?Math.round(h.winner_solde).toLocaleString()+" XAF":"";
+    const heure=h.heure||"";
+    const tip=nom?`<span class="hn-tip">${nom}${sol?" — "+sol:""} ${heure}</span>`:"";
+    return `<div class="hn" style="background:${NC[n]}">${n}${tip}</div>`;
+  }).join("");
+}
+
+function showBanner(msg,col){
+  const b=document.createElement("div");
+  b.className="banner";
+  b.style.background=col;b.style.color="#0d0d0d";
+  b.textContent=msg;document.getElementById("NK").appendChild(b);
+  setTimeout(()=>b.remove(),3000);
+}
+
+// ═══════════════════════════════════════════════════
+//  MISE (envoyée au bot pour validation)
+// ═══════════════════════════════════════════════════
+function selNum(n){selectedNum=n;for(let i=0;i<6;i++){const el=document.getElementById("ng"+i);if(el)el.classList.toggle("sel",i===n);}}
+
+async function validerMise(){
+  const err=document.getElementById("merr");
+  if(selectedNum<0){err.textContent="Choisissez un numéro";err.className="oerr err";return;}
+  const inp=parseInt(document.getElementById("mise-inp").value)||0;
+  if(inp<1){err.textContent="Minimum 1 XAF";err.className="oerr err";return;}
+  if(inp>500){err.textContent="Maximum 500 XAF";err.className="oerr err";return;}
+  if(inp>bal){err.textContent="Solde insuffisant";err.className="oerr err";return;}
+  err.textContent="Envoi...";err.className="oerr";
+  try{
+    const res=await fetch(`${API}/api/mise`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,mise:inp,numero:selectedNum})
+    });
+    const data=await res.json();
+    if(data.success){
+      bal=data.new_solde;fmtBal();
+      addRow({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,real:true},true);
+      closeOv();
+      showBanner(`Mise de ${inp} XAF sur N°${selectedNum} enregistrée !`,"#f0b90b");
+    } else {err.textContent=data.message;err.className="oerr err";}
+  } catch(e){err.textContent="Erreur serveur";err.className="oerr err";}
+}
+
+// ═══════════════════════════════════════════════════
+//  PANNEAUX OVERLAY
+// ═══════════════════════════════════════════════════
+function openPanel(type){
+  const ov=document.getElementById("ov"),box=document.getElementById("ovbox");
+  ov.style.display="flex";
+
+  if(type==="histo"){
+    // Historique enrichi synchronisé avec le bot (20 tirages)
+    box.innerHTML=`<div class="otitle">📊 Historique des tirages</div>
+      <div style="font-size:.65rem;color:#444;margin-bottom:.5rem;text-align:center">Synchronisé avec le serveur</div>
+      ${histFull.slice(0,20).map(h=>{
+        const n=h.numero;
+        const nom=h.winner_name||"—";
+        const sol=h.winner_solde?Math.round(h.winner_solde).toLocaleString()+" XAF":"—";
+        const hr=h.heure||"";
+        return `<div class="hist-row">
+          <div class="hbadge" style="background:${NC[n]}">${n}</div>
+          <div class="hinfo"><div class="hname">${nom}</div><div class="hsolde">${sol}</div></div>
+          <div class="heure">${hr}</div>
+        </div>`;
+      }).join("")||`<div style="color:#444;font-size:.75rem;text-align:center;padding:1rem">Aucun tirage encore</div>`}`;
+  }
+
+  else if(type==="mise"){
+    selectedNum=-1;
+    box.innerHTML=`<div class="otitle">💰 Placer une mise</div>
+      <div style="font-size:.72rem;color:#666;margin-bottom:.4rem">Choisissez un numéro (0–5)</div>
+      <div class="numgrid">
+        ${[0,1,2,3,4,5].map(n=>`<div class="ngb" style="background:${NC[n]}" onclick="selNum(${n})" id="ng${n}">${n}</div>`).join("")}
+      </div>
+      <div style="font-size:.72rem;color:#666;margin:.4rem 0 .2rem">Montant (1–500 XAF)</div>
+      <input class="inp" id="mise-inp" type="number" min="1" max="500" placeholder="Ex: 100" inputmode="numeric">
+      <div class="oerr err" id="merr"></div>
+      <div style="font-size:.68rem;color:#555;margin-bottom:.4rem">Solde: <span style="color:#f0b90b">${Math.round(bal).toLocaleString()} XAF</span></div>
+      <button class="obtn" onclick="validerMise()">Confirmer la mise</button>`;
+  }
+
+  else if(type==="banque"){
+    bankTab="depot";renderBank(box);
+  }
+
+  else if(type==="amis"){
+    const lien=`https://t.me/NkapExpressBot?start=ref_${userId}`;
+    box.innerHTML=`<div class="otitle">👥 Parrainage</div>
+      <div style="font-size:.72rem;color:#666;margin-bottom:.4rem">Votre lien unique</div>
+      <div style="background:#181818;border:1px solid #1e1e1e;border-radius:8px;padding:.65rem;font-size:.68rem;color:#777;margin-bottom:.65rem;word-break:break-all">${lien}</div>
+      <button class="obtn" onclick="copyLink('${lien}')">Copier le lien</button>
+      <div id="par-stats" style="margin-top:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#0d0d0d;border-radius:8px;padding:.6rem;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#f0b90b" id="nb-fil">—</div><div style="font-size:.62rem;color:#444">Filleuls</div></div>
+        <div style="background:#0d0d0d;border-radius:8px;padding:.6rem;text-align:center"><div style="font-size:1rem;font-weight:700;color:#f0b90b" id="bon-fil">—</div><div style="font-size:.62rem;color:#444">Bonus gagné</div></div>
+      </div>`;
+    fetch(`${API}/api/parrainage?user_id=${userId}`)
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.success){
+          document.getElementById("nb-fil").textContent=d.filleuls;
+          document.getElementById("bon-fil").textContent=Math.round(d.bonus_total).toLocaleString()+" XAF";
+        }
+      }).catch(()=>{});
+  }
+}
+
+function renderBank(box){
+  box.innerHTML=`<div class="otitle">💳 Banque</div>
+    <div class="tab2">
+      <div class="tabo${bankTab==="depot"?" active":""}" onclick="bankTab='depot';renderBank(document.getElementById('ovbox'))">Dépôt</div>
+      <div class="tabo${bankTab==="retrait"?" active":""}" onclick="bankTab='retrait';renderBank(document.getElementById('ovbox'))">Retrait</div>
+    </div>
+    ${bankTab==="depot"?`
+      <div style="font-size:.72rem;color:#666;margin-bottom:.4rem">Dépôt via Mobile Money (traitement manuel)</div>
+      <input class="inp" type="number" id="dep-amount" placeholder="Montant (min 100 XAF)" inputmode="numeric">
+      <input class="inp" type="tel" id="dep-tel" placeholder="Votre numéro Mobile Money">
+      <button class="obtn" onclick="initDepot()">Envoyer la demande</button>
+      <div style="background:#0d0d0d;border-radius:8px;padding:.6rem;margin-top:.6rem;font-size:.68rem;color:#555;line-height:1.5">
+        Après confirmation, envoyez le montant.<br>Votre compte sera crédité sous 5–15 min.
+      </div>
+    `:`
+      <div style="font-size:.72rem;color:#666;margin-bottom:.4rem">Solde: <span style="color:#f0b90b">${Math.round(bal).toLocaleString()} XAF</span></div>
+      <input class="inp" type="number" id="ret-amount" placeholder="Montant (min 100 XAF)" inputmode="numeric">
+      <input class="inp" type="tel" id="ret-tel" placeholder="Numéro Mobile Money">
+      <button class="obtn" onclick="initRetrait()">Demander le retrait</button>
+    `}
+    <div class="oerr" id="berr" style="margin-top:.4rem"></div>`;
+}
+
+async function initDepot(){
+  const v=parseInt(document.getElementById("dep-amount").value)||0;
+  const tel=document.getElementById("dep-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100){err.textContent="Minimum 100 XAF";err.className="oerr err";return;}
+  if(!tel){err.textContent="Entrez votre numéro";err.className="oerr err";return;}
+  err.textContent="Envoi...";err.className="oerr";
+  try{
+    const res=await fetch(`${API}/api/depot`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
+    });
+    const d=await res.json();
+    err.textContent=d.message;err.className=d.success?"oerr ok":"oerr err";
+  } catch(e){err.textContent="Erreur serveur";err.className="oerr err";}
+}
+
+async function initRetrait(){
+  const v=parseInt(document.getElementById("ret-amount").value)||0;
+  const tel=document.getElementById("ret-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100){err.textContent="Minimum 100 XAF";err.className="oerr err";return;}
+  if(v>bal){err.textContent="Solde insuffisant";err.className="oerr err";return;}
+  if(!tel){err.textContent="Entrez votre numéro";err.className="oerr err";return;}
+  err.textContent="Envoi...";err.className="oerr";
+  try{
+    const res=await fetch(`${API}/api/retrait`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
+    });
+    const d=await res.json();
+    if(d.success){bal=d.new_solde;fmtBal();}
+    err.textContent=d.message;err.className=d.success?"oerr ok":"oerr err";
+  } catch(e){err.textContent="Erreur serveur";err.className="oerr err";}
+}
+
+function copyLink(lien){
+  navigator.clipboard.writeText(lien).catch(()=>{});
+  showBanner("Lien copié !","#f0b90b");
+}
+
+function closeOv(){document.getElementById("ov").style.display="none";}
+document.getElementById("ov").addEventListener("click",function(e){if(e.target===this)closeOv();});
+
+    <!-- SCRIPTS -->
+    <script src="https://telegram.org"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Initialisation visuelle si nécessaire
+        try { drawW(0); } catch(e) {}
+
+        // TON URL NGROK ACTUELLE
+        const API_URL = "https://sworn-compacter-dental.ngrok-free.dev"; 
         
-        /* NAV */
-        #nav{background:#0f0f0f;border-top:1px solid #1a1a1a;display:flex;padding:10px}
-        .nvb{flex:1;color:#555;text-align:center;font-size:0.7rem}
-        .nvb.active{color:#f0b90b}
+        let pinBuffer = "";
+        const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 6657204005;
+
+        // 1. GESTION DU VERROU (srv-lock)
+        async function checkServer() {
+            try {
+                const res = await fetch(`${API_URL}/api/user_status?user_id=${userId}`);
+                if(res.ok) {
+                    document.getElementById('srv-lock').style.display = 'none';
+                    // On ne montre l'auth que si le verrou est caché
+                    document.getElementById('auth').style.display = 'flex';
+                }
+            } catch(e) {
+                document.getElementById('lock-timer').innerText = "!!";
+                console.log("En attente du tunnel Ngrok...");
+            }
+        }
+
+        // 2. LOGIQUE DU CODE PIN
+        function updateDots() {
+            const dots = document.querySelectorAll('.pd');
+            dots.forEach((d, i) => d.classList.toggle('on', i < pinBuffer.length));
+        }
+
+        function addPin(n) {
+            if(pinBuffer.length < 4) {
+                pinBuffer += n;
+                updateDots();
+                if(pinBuffer.length === 4) submitPin();
+            }
+        }
+
+        function clearPin() { pinBuffer = ""; updateDots(); }
+
+        async function submitPin() {
+            const errDiv = document.getElementById('auth-err');
+            errDiv.innerText = "Vérification...";
+            
+            try {
+                const res = await fetch(`${API_URL}/api/gatekeeper`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({id: userId, pin: pinBuffer})
+                });
+                const data = await res.json();
+                
+                if(data.status === "success") {
+                    document.getElementById('auth').style.display = 'none';
+                    tg.HapticFeedback.notificationOccurred('success');
+                    startSync(); 
+                } else {
+                    errDiv.innerText = data.message;
+                    clearPin();
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            } catch(e) {
+                errDiv.innerText = "Erreur de liaison (CORS ou Ngrok)";
+            }
+        }
+
+        // 3. SYNCHRONISATION DU JEU
+        function startSync() {
+            setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_URL}/api/user_status?user_id=${userId}`);
+                    const data = await res.json();
+                    if(document.getElementById('user-solde')) {
+                        document.getElementById('user-solde').innerText = data.solde + " XAF";
+                    }
+                    if(document.getElementById('main-timer')) {
+                        document.getElementById('main-timer').innerText = data.remaining_time;
+                    }
+                } catch(e) {}
+            }, 1000);
+        }
+
+        // Lancer la vérification du serveur
+        setInterval(checkServer, 2000);
+    </script>
+</body>
+</html>
+eta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LE FERMÉ - Expert Game Design</title>
+    <style>
+        :root { --cameroon-green: #007a5e; --cameroon-red: #ce1126; --cameroon-yellow: #fcd116; }
+        body { background: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
+        
+        /* Interface de jeu */
+        #game-container { background: #2a2a2a; padding: 30px; border-radius: 20px; border: 4px solid var(--cameroon-yellow); box-shadow: 0 0 20px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 500px; }
+        .hand-area { display: flex; justify-content: space-around; margin: 40px 0; }
+        .hand { font-size: 60px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hand.shake { animation: shake 0.5s infinite; }
+        
+        /* Boutons et UI */
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        button { padding: 15px 25px; font-size: 18px; font-weight: bold; cursor: pointer; border-radius: 10px; border: none; transition: 0.2s; background: var(--cameroon-yellow); color: black; }
+        button:hover { transform: scale(1.05); filter: brightness(1.1); }
+        button:disabled { background: #555; cursor: not-allowed; }
+        
+        #status-msg { height: 50px; font-style: italic; color: #aaa; margin: 15px 0; }
+        #result-banner { font-size: 24px; font-weight: bold; text-transform: uppercase; height: 40px; }
+        .balance { font-size: 1.2em; color: var(--cameroon-green); background: #eee; padding: 5px 15px; border-radius: 20px; margin-bottom: 10px; display: inline-block; }
+
+        @keyframes shake {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-<div id="NK">
-    <!-- 1. ECRAN DE CHARGEMENT -->
-    <div id="srv-lock">
-        <div class="lock-logo">NKAP EXPRESS</div>
-        <div class="cd-box">
-            <div class="cd-num" id="lock-timer">--</div>
+    <div id="game-container">
+        <div class="balance">💰 Solde: <span id="money">2500</span> XAF</div>
+        <h2 style="margin: 5px 0;">LE FERMÉ</h2>
+        <p style="font-size: 0.8em; color: var(--cameroon-red);">Duel Psychologique - 100 XAF</p>
+
+        <div id="status-msg">Le Fermeur (Bot) a déjà fermé sa main...</div>
+
+        <div class="hand-area">
+            <div>
+                <div id="bot-hand" class="hand">✊</div>
+                <small>FERMEUR (IA)</small>
+            </div>
+            <div>
+                <div id="player-hand" class="hand">❔</div>
+                <small>DÉCOUVREUR (TOI)</small>
+            </div>
         </div>
-        <div style="color:#555;font-size:0.7rem"><span class="pulse"></span> CONNEXION AU SERVEUR...</div>
-    </div>
 
-    <!-- 2. ECRAN PIN -->
-    <div id="auth">
-        <div style="color:#f0b90b;font-size:1.5rem;font-weight:bold">VÉRIFICATION</div>
-        <div class="pdots">
-            <div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+        <div id="result-banner"></div>
+
+        <div class="btn-group">
+            <button id="btn-piece" onclick="initierPari(0)">PIÈCE 🪙</button>
+            <button id="btn-corne" onclick="initierPari(1)">CORNE 🤘</button>
         </div>
-        <div class="ppad">
-            <button class="pb" onclick="addPin(1)">1</button><button class="pb" onclick="addPin(2)">2</button><button class="pb" onclick="addPin(3)">3</button>
-            <button class="pb" onclick="addPin(4)">4</button><button class="pb" onclick="addPin(5)">5</button><button class="pb" onclick="addPin(6)">6</button>
-            <button class="pb" onclick="addPin(7)">7</button><button class="pb" onclick="addPin(8)">8</button><button class="pb" onclick="addPin(9)">9</button>
-            <button class="pb" style="color:red" onclick="clearPin()">✖</button><button class="pb" onclick="addPin(0)">0</button>
-        </div>
-        <div id="auth-err" style="color:red;font-size:0.8rem"></div>
+        
+        <p style="font-size: 0.7em; margin-top: 20px; opacity: 0.5;">Règle : Tu gagnes si ta face est DIFFÉRENTE (Vient mon contrait)</p>
     </div>
 
-    <!-- 3. INTERFACE PRINCIPALE -->
-    <div id="hdr">
-        <div><div style="font-size:0.6rem;color:#444">SOLDE</div><div class="bal-val" id="user-solde">0 XAF</div></div>
-        <div style="text-align:right"><div style="font-size:0.6rem;color:#444">TIMER</div><div id="main-timer" style="color:#f0b90b">--</div></div>
-    </div>
+    <script>
+        // Logique métier (Simulant le Java)
+        let solde = 2500;
+        const mise = 100;
+        const faces = ["🪙 PIÈCE", "🤘 CORNE"];
+        let jeuEnCours = false;
 
-    <div id="content">
-        <div class="numgrid">
-            <button class="ngb" onclick="selectN(0)">0</button><button class="ngb" onclick="selectN(1)">1</button><button class="ngb" onclick="selectN(2)">2</button>
-            <button class="ngb" onclick="selectN(3)">3</button><button class="ngb" onclick="selectN(4)">4</button><button class="ngb" onclick="selectN(5)">5</button>
-        </div>
-        <input type="number" id="bet-amt" value="100" style="width:100%;padding:15px;background:#111;border:1px solid #333;color:white;border-radius:10px;margin-bottom:10px">
-        <button onclick="placeBet()" style="width:100%;padding:15px;background:#f0b90b;border:none;border-radius:10px;font-weight:bold;color:black">PARIER (X5)</button>
-    </div>
+        function initierPari(choixJoueur) {
+            if (jeuEnCours || solde < mise) return;
+            
+            jeuEnCours = true;
+            document.getElementById('btn-piece').disabled = true;
+            document.getElementById('btn-corne').disabled = true;
+            document.getElementById('result-banner').innerText = "";
+            
+            // 1. Choix caché du Fermeur (IA)
+            const choixFermeur = Math.floor(Math.random() * 2); 
+            
+            // 2. Animation de fermeture du joueur
+            document.getElementById('player-hand').innerText = "✊";
+            document.getElementById('player-hand').classList.add('shake');
+            document.getElementById('bot-hand').classList.add('shake');
+            document.getElementById('status-msg').innerText = "Vérification des mains... (5s)";
 
-    <div id="nav">
-        <div class="nvb active">JOUER</div>
-        <div class="nvb">RETRAIT</div>
-        <div class="nvb">INFOS</div>
-    </div>
-</div>
-
-<script src="https://telegram.org"></script>
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    // !!! METS TON URL NGROK ICI !!!
-    const API_URL = "https://ngrok-free.dev"; 
-    
-    let pinBuffer = "";
-    let selectedNum = null;
-    const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 6657204005;
-
-    // --- LOGIQUE SYNCHRO ---
-    async function checkServer() {
-        try {
-            const res = await fetch(`${API_URL}/api/user_status?user_id=${userId}`);
-            if(res.ok) {
-                document.getElementById('srv-lock').style.display = 'none';
-                if(pinBuffer.length < 4) document.getElementById('auth').style.display = 'flex';
-            }
-        } catch(e) { console.log("Recherche serveur..."); }
-    }
-
-    // --- LOGIQUE PIN ---
-    function addPin(n) {
-        if(pinBuffer.length < 4) {
-            pinBuffer += n;
-            const dots = document.querySelectorAll('.pd');
-            dots.forEach((d, i) => d.classList.toggle('on', i < pinBuffer.length));
-            if(pinBuffer.length === 4) submitPin();
+            // 3. Délai de suspense (5 secondes comme demandé)
+            setTimeout(() => {
+                revelerResultat(choixFermeur, choixJoueur);
+            }, 5000);
         }
-    }
-    function clearPin() { pinBuffer = ""; document.querySelectorAll('.pd').forEach(d => d.classList.remove('on')); }
 
-    async function submitPin() {
-        try {
-            const res = await fetch(`${API_URL}/api/gatekeeper`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({id: userId, pin: pinBuffer})
-            });
-            const data = await res.json();
-            if(data.status === "success") {
-                document.getElementById('auth').style.display = 'none';
-                startSync();
+        function revelerResultat(f, j) {
+            document.getElementById('player-hand').classList.remove('shake');
+            document.getElementById('bot-hand').classList.remove('shake');
+            
+            // Affichage des faces
+            document.getElementById('bot-hand').innerText = (f === 0) ? "🪙" : "🤘";
+            document.getElementById('player-hand').innerText = (j === 0) ? "🪙" : "🤘";
+
+            const banner = document.getElementById('result-banner');
+            
+            // RÈGLE : Gagne si différent (Vient mon contrait)
+            if (f !== j) {
+                banner.innerText = "VIENT MON CONTRAIT ! (+100)";
+                banner.style.color = "#4CAF50";
+                solde += mise;
             } else {
-                document.getElementById('auth-err').innerText = data.message;
-                clearPin();
+                banner.innerText = "DOUBLÉ ! TU PERDS (-100)";
+                banner.style.color = "#ce1126";
+                solde -= mise;
             }
-        } catch(e) { document.getElementById('auth-err').innerText = "Erreur liaison"; }
-    }
 
-    function selectN(n) {
-        selectedNum = n;
-        document.querySelectorAll('.ngb').forEach(b => b.classList.remove('sel'));
-        event.target.classList.add('sel');
-    }
-
-    async function placeBet() {
-        const amt = document.getElementById('bet-amt').value;
-        if(selectedNum === null) return alert("Choisis un numéro");
-        const res = await fetch(`${API_URL}/api/place_bet`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({user_id: userId, numero: selectedNum, mise: amt})
-        });
-        const data = await res.json();
-        if(data.success) alert("Pari placé !");
-    }
-
-    function startSync() {
-        setInterval(async () => {
-            try {
-                const res = await fetch(`${API_URL}/api/user_status?user_id=${userId}`);
-                const data = await res.json();
-                document.getElementById('user-solde').innerText = data.solde + " XAF";
-                document.getElementById('main-timer').innerText = data.remaining_time;
-                document.getElementById('lock-timer').innerText = data.remaining_time;
-            } catch(e) {}
-        }, 1000);
-    }
-
-    setInterval(checkServer, 2000);
-</script>
+            document.getElementById('money').innerText = solde;
+            document.getElementById('status-msg').innerText = "Manche terminée. Prêt pour la suivante ?";
+            
+            // Réinitialisation après 3s pour rejouer
+            setTimeout(() => {
+                document.getElementById('btn-piece').disabled = false;
+                document.getElementById('btn-corne').disabled = false;
+                document.getElementById('player-hand').innerText = "❔";
+                document.getElementById('bot-hand').innerText = "✊";
+                jeuEnCours = false;
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
