@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NKAP EXPRESS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
+body{background:#0d0d0d;display:flex;justify-content:center;min-height:100vh;padding:.5rem}
+#NK{background:#0d0d0d;color:#e5e5e5;min-height:680px;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;position:relative;width:100%;max-width:480px;border:1px solid #1e1e1e}
+
+/* ── AUTH ── */
+#auth{position:absolute;inset:0;background:#0d0d0d;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem}
+.alogo{font-size:2rem;font-weight:700;color:#f0b90b;letter-spacing:3px}
+.asub{font-size:.7rem;color:#555;letter-spacing:4px}
+.abox{background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:1.5rem;width:300px;text-align:center}
+.atitle{font-size:.8rem;color:#888;margin-bottom:1rem}
+.pdots{display:flex;gap:10px;justify-content:center;margin-bottom:1.2rem}
+.pd{width:13px;height:13px;border-radius:50%;border:2px solid #333;background:transparent;transition:background .2s}
+.pd.on{background:#f0b90b;border-color:#f0b90b}
+.ppad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:180px;margin:0 auto}
+.pb{background:#1e1e1e;border:1px solid #2a2a2a;color:#e5e5e5;font-size:1rem;font-weight:500;border-radius:8px;padding:12px;cursor:pointer;transition:background .15s}
+.pb:hover{background:#2a2a2a}
+.pb.del{color:#ef4444}
+.pb.ok{color:#f0b90b}
+.aerr{color:#ef4444;font-size:.75rem;margin-top:.6rem;min-height:1rem}
+.ainfo{font-size:.68rem;color:#444;margin-top:.5rem}
+
+/* ── HEADER ── */
+#header{background:#111;border-bottom:1px solid #1e1e1e;padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.live-dot{display:flex;align-items:center;gap:6px;font-size:.7rem;color:#ef4444;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.timer-ring{position:relative;width:48px;height:48px}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#f0b90b}
+.balance-box{text-align:right}
+.bal-label{font-size:.6rem;color:#555}
+.bal-val{font-size:.95rem;font-weight:700;color:#f0b90b}
+
+/* ── HISTBAR ── */
+#histbar{background:#111;border-bottom:1px solid #1a1a1a;padding:.4rem 1rem;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.hl{font-size:.65rem;color:#555;white-space:nowrap}
+.hnums{display:flex;gap:5px;overflow:hidden;flex:1}
+.hn{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;color:#fff}
+
+/* ── BET TABLE ── */
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+#bet-panel{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.bet-stats{display:flex;align-items:center;justify-content:space-between;padding:.4rem 1rem;background:#131313;border-bottom:1px solid #1a1a1a;flex-wrap:wrap;gap:4px}
+.bstat{font-size:.7rem;color:#888}
+.bstat span{color:#f0b90b;font-weight:600}
+.bet-head{display:grid;grid-template-columns:1fr 70px 46px;padding:.4rem .75rem;background:#161616;font-size:.65rem;color:#555;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+.bet-scroll{flex:1;overflow-y:auto;max-height:260px}
+.brow{display:grid;grid-template-columns:1fr 70px 46px;padding:.4rem .75rem;border-bottom:1px solid #191919;font-size:.75rem;animation:rowIn .25s ease}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.brow.real{background:#1a1500;border-left:3px solid #f0b90b}
+.pcell{display:flex;align-items:center;gap:5px;overflow:hidden}
+.pn{color:#ccc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc{color:#22c55e;font-weight:600;text-align:right;font-size:.72rem}
+.nc{text-align:center}
+.nb2{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:.6rem;font-weight:700;color:#fff}
+
+/* ── WHEEL ── */
+#wheel-panel{display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;gap:1rem;flex:1}
+.wlabel{font-size:.7rem;color:#555;letter-spacing:2px;text-transform:uppercase}
+.wheel-wrap{position:relative;width:190px;height:190px}
+.wptr{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:18px solid #f0b90b}
+.wnum{font-size:2.8rem;font-weight:700;color:#f0b90b;transition:opacity .4s}
+
+/* ── PODIUM ── */
+#podium-panel{display:none;flex-direction:column;align-items:center;padding:1rem;gap:.6rem;flex:1}
+.pod-title{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:2px}
+.pod-num{font-size:2rem;font-weight:700}
+.wcard{background:#161606;border:1px solid #f0b90b;border-radius:8px;padding:.6rem 1rem;width:100%;max-width:300px;display:flex;align-items:center;gap:8px;animation:glow 1.5s infinite}
+@keyframes glow{0%,100%{border-color:#f0b90b}50%{border-color:#e0a800}}
+.wcard-name{font-size:.85rem;font-weight:600;color:#fde68a}
+.wcard-det{font-size:.65rem;color:#888}
+
+/* ── NAV ── */
+#nav{background:#111;border-top:1px solid #1e1e1e;display:flex;align-items:center;flex-shrink:0}
+.nvb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.6rem .25rem;cursor:pointer;gap:2px;border:none;background:transparent;color:#555;font-size:.55rem;transition:color .2s;text-transform:uppercase;letter-spacing:.5px}
+.nvb:hover{color:#f0b90b}
+.nvb .ico{font-size:16px}
+.nvb.center-btn{flex:1.4;background:#f0b90b;color:#0d0d0d;border-radius:10px;margin:.3rem .15rem;font-weight:700;font-size:.6rem}
+.nvb.center-btn:hover{background:#e0a800}
+
+/* ── OVERLAY ── */
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1rem}
+.obox{background:#161616;border:1px solid #2a2a2a;border-radius:12px;padding:1.5rem;width:100%;max-width:320px;max-height:80vh;overflow-y:auto;position:relative}
+.otitle{font-size:.9rem;font-weight:600;color:#f0b90b;margin-bottom:1rem;text-align:center}
+.oclose{position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:#555;font-size:1.1rem;cursor:pointer}
+.inp{width:100%;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:8px;padding:9px 12px;color:#e5e5e5;font-size:.85rem;margin-bottom:.6rem;outline:none}
+.inp:focus{border-color:#f0b90b}
+.oerr{color:#ef4444;font-size:.72rem;min-height:1rem;margin-bottom:.4rem}
+.obtn{width:100%;padding:10px;border-radius:8px;border:none;background:#f0b90b;color:#0d0d0d;font-weight:700;font-size:.85rem;cursor:pointer;margin-top:.25rem}
+.obtn:hover{background:#e0a800}
+.obtn.sec{background:#1e1e1e;color:#e5e5e5;border:1px solid #2a2a2a;margin-top:.5rem}
+.numgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:.75rem 0}
+.ngb{padding:10px 0;border-radius:8px;border:2px solid transparent;font-size:1rem;font-weight:700;cursor:pointer;text-align:center;transition:all .15s;color:#fff}
+.ngb.sel{border-color:#f0b90b;transform:scale(1.08)}
+.tab2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem}
+.tabopt{padding:10px;border-radius:8px;border:1px solid #2a2a2a;background:#1e1e1e;color:#888;cursor:pointer;text-align:center;font-size:.8rem}
+.tabopt.active{background:#f0b90b;color:#0d0d0d;border-color:#f0b90b;font-weight:700}
+.tut-step{background:#111;border-radius:8px;padding:.75rem;margin-bottom:.5rem;display:flex;gap:.75rem;align-items:flex-start}
+.tut-num{min-width:24px;height:24px;border-radius:50%;background:#f0b90b;color:#0d0d0d;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tut-txt{font-size:.75rem;color:#aaa;line-height:1.5}
+.loading{color:#555;font-size:.75rem;text-align:center;padding:.5rem;animation:blink 1s infinite}
+</style>
+</head>
+<body>
+<div id="NK">
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="alogo">NKAP EXPRESS</div>
+  <div class="asub">CASINO MONDIAL</div>
+  <div class="abox">
+    <div class="atitle">Entrez votre code secret (5 chiffres)</div>
+    <div class="pdots">
+      <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div><div class="pd" id="pd4"></div>
+    </div>
+    <div class="ppad">
+      <button class="pb" onclick="ap('1')">1</button><button class="pb" onclick="ap('2')">2</button><button class="pb" onclick="ap('3')">3</button>
+      <button class="pb" onclick="ap('4')">4</button><button class="pb" onclick="ap('5')">5</button><button class="pb" onclick="ap('6')">6</button>
+      <button class="pb" onclick="ap('7')">7</button><button class="pb" onclick="ap('8')">8</button><button class="pb" onclick="ap('9')">9</button>
+      <button class="pb del" onclick="dp()">&#9003;</button><button class="pb" onclick="ap('0')">0</button><button class="pb ok" onclick="checkPin()">OK</button>
+    </div>
+    <div class="aerr" id="aerr"></div>
+    <div class="ainfo" id="ainfo">Connecté au serveur...</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="live-dot"><div class="dot"></div>EN DIRECT</div>
+  <div class="timer-ring">
+    <svg width="48" height="48" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="#1e1e1e" stroke-width="4"/>
+      <circle id="ring" cx="24" cy="24" r="20" fill="none" stroke="#22c55e" stroke-width="4"
+        stroke-dasharray="125.66" stroke-dashoffset="0" stroke-linecap="round"
+        style="transition:stroke-dashoffset .9s linear,stroke .3s"/>
+    </svg>
+    <div class="timer-inner" id="tnum">15</div>
+  </div>
+  <div class="balance-box">
+    <div class="bal-label">SOLDE</div>
+    <div class="bal-val" id="bal">— XAF</div>
+  </div>
+</div>
+
+<!-- HISTBAR -->
+<div id="histbar">
+  <span class="hl">Historique:</span>
+  <div class="hnums" id="hnums"></div>
+</div>
+
+<!-- CONTENU -->
+<div id="content">
+  <div id="bet-panel">
+    <div class="bet-stats">
+      <div class="bstat">Joueurs: <span id="pcount">0</span></div>
+      <div class="bstat">Total: <span id="totalmise">0</span> XAF</div>
+      <div class="bstat" id="phasebadge" style="color:#f0b90b;font-size:.68rem">MISES OUVERTES</div>
+    </div>
+    <div class="bet-head">
+      <span>Joueur</span><span style="text-align:right">Mise</span><span style="text-align:center">N°</span>
+    </div>
+    <div class="bet-scroll" id="bscroll"></div>
+  </div>
+  <div id="wheel-panel">
+    <div class="wlabel">Tirage en cours</div>
+    <div class="wheel-wrap">
+      <canvas id="wcanvas" width="190" height="190"></canvas>
+      <div class="wptr"></div>
+    </div>
+    <div class="wnum" id="wnum" style="opacity:0">—</div>
+  </div>
+  <div id="podium-panel">
+    <div class="pod-title">Numéro gagnant</div>
+    <div class="pod-num" id="pod-num">—</div>
+    <div id="winners" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:.4rem;max-height:220px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nvb" onclick="openPanel('histo')"><span class="ico">📊</span>HISTO</button>
+  <button class="nvb" onclick="openPanel('banque')"><span class="ico">💳</span>BANQUE</button>
+  <button class="nvb center-btn" onclick="openPanel('mise')"><span class="ico" style="font-size:18px">💰</span>MISER</button>
+  <button class="nvb" onclick="openPanel('amis')"><span class="ico">👥</span>AMIS</button>
+  <button class="nvb" onclick="openPanel('aide')"><span class="ico">❓</span>AIDE</button>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="ov">
+  <div style="position:relative;width:100%;max-width:320px">
+    <button class="oclose" onclick="closeOv()">✕</button>
+    <div class="obox" id="ovbox"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  CONFIG — Changez uniquement cette URL
+// ═══════════════════════════════════════════
+const API = "http://localhost:5000"; // ← URL de votre serveur bot Flask
+
+// ═══════════════════════════════════════════
+//  ÉTAT GLOBAL
+// ═══════════════════════════════════════════
+const NC = ["#374151","#2563eb","#059669","#d97706","#7c3aed","#dc2626"];
+let pinv="", bal=0, userId=null, userPin="";
+let hist=[], currentPhase="betting", wAngle=0, wAnimId=null;
+let selectedNum=-1, bankTab="depot", timerV=15, timerInt=null;
+let pollingInt=null, lastPhase="", lastTourId="";
+let botsDisplayed=[], realDisplayed=false;
+
+// Récupère l'ID Telegram si disponible (WebApp Telegram)
+if(window.Telegram && window.Telegram.WebApp){
+  const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+  if(tgUser) userId = tgUser.id;
+  document.getElementById("ainfo").textContent = userId ? "Compte Telegram détecté" : "Mode autonome";
+} else {
+  // Mode test navigateur : ID fictif
+  userId = 100000001;
+  document.getElementById("ainfo").textContent = "Mode test (navigateur)";
+}
+
+// ═══════════════════════════════════════════
+//  AUTH PIN
+// ═══════════════════════════════════════════
+function ap(d){ if(pinv.length>=5)return; pinv+=d; upd(); if(pinv.length===5)setTimeout(checkPin,180); }
+function dp(){ pinv=pinv.slice(0,-1); upd(); }
+function upd(){ for(let i=0;i<5;i++) document.getElementById("pd"+i).classList.toggle("on",i<pinv.length); }
+
+async function checkPin(){
+  const err=document.getElementById("aerr");
+  if(pinv.length!==5){ err.textContent="5 chiffres requis"; pinv=""; upd(); return; }
+  err.textContent="Vérification...";
+  try{
+    const res = await fetch(`${API}/api/auth`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({user_id: userId, pin: pinv})
+    });
+    const data = await res.json();
+    if(data.success){
+      userPin = pinv;
+      bal = data.solde;
+      hist = data.history || [];
+      document.getElementById("auth").style.display="none";
+      fmtBal(); renderHist();
+      startPolling();
+    } else {
+      err.textContent = data.message || "Code incorrect";
+      pinv=""; upd();
+    }
+  } catch(e){
+    // Si le bot n'est pas connecté, mode autonome
+    err.textContent="";
+    userPin = pinv;
+    document.getElementById("auth").style.display="none";
+    startLocalGame();
+  }
+}
+
+// ═══════════════════════════════════════════
+//  COMMUNICATION BOT (POLLING)
+// ═══════════════════════════════════════════
+function startPolling(){
+  fetchState();
+  pollingInt = setInterval(fetchState, 2000);
+}
+
+async function fetchState(){
+  try{
+    const res = await fetch(`${API}/api/state?user_id=${userId}`);
+    const data = await res.json();
+    bal = data.solde || bal;
+    fmtBal();
+    renderHist(data.history || []);
+    syncPhase(data);
+  } catch(e){
+    // Serveur non disponible → mode autonome
+    if(!timerInt) startLocalGame();
+  }
+}
+
+function syncPhase(data){
+  const phase = data.phase;
+  const tid   = data.tour_id;
+
+  // Nouveau tour → vider le tableau
+  if(tid !== lastTourId){
+    lastTourId = tid;
+    botsDisplayed = [];
+    realDisplayed = false;
+    document.getElementById("bscroll").innerHTML="";
+    document.getElementById("pcount").textContent="0";
+    document.getElementById("totalmise").textContent="0";
+  }
+
+  // Afficher les bots non encore affichés
+  const bots = data.bots || [];
+  bots.forEach(b=>{
+    const key = b.flag+b.name+b.mise;
+    if(!botsDisplayed.includes(key)){
+      botsDisplayed.push(key);
+      addRow(b);
+    }
+  });
+
+  document.getElementById("pcount").textContent = data.total_players || 0;
+
+  if(phase === "betting"){
+    showBet();
+    document.getElementById("phasebadge").textContent="MISES OUVERTES";
+    // Chrono local approximatif (15s)
+    if(lastPhase !== "betting"){
+      lastPhase = "betting";
+      timerV=15;
+      if(timerInt) clearInterval(timerInt);
+      startTimerLocal();
+    }
+  } else if(phase === "result"){
+    lastPhase = "result";
+    if(timerInt){ clearInterval(timerInt); timerInt=null; }
+    const win = data.win_number;
+    if(win !== null && win !== undefined){
+      showWheelResult(win);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+//  MODE AUTONOME (sans bot)
+// ═══════════════════════════════════════════
+const FLAGS_LOCAL = {
+  "🇸🇳":["Moussa","Fatoumata","Traoré","Diallo"],
+  "🇨🇲":["Dieudonné","Inès","Kamga","Aristide"],
+  "🇬🇭":["Kofi","Ama","Thabo","Kwame"],
+  "🇫🇷":["Lucas","Emma","Martin","Léa"],
+  "🇺🇸":["Jackson","Olivia","Smith","Johnson"],
+  "🇩🇪":["Lukas","Hanna","Müller","Klaus"],
+  "🇧🇷":["Rafael","Ana","Silva","Pedro"],
+};
+const FL_LOCAL = Object.keys(FLAGS_LOCAL);
+
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function blur(n){ return n.length<=3?n[0]+"**":n.slice(0,2)+"*".repeat(n.length-2); }
+
+function genBot(){
+  const f=pick(FL_LOCAL), nm=pick(FLAGS_LOCAL[f]);
+  const r=Math.random();
+  const mise=r<.55?rnd(1,50):r<.85?rnd(51,200):rnd(201,500);
+  return {flag:f, name:blur(nm), mise, num:rnd(0,5), is_bot:true};
+}
+
+let localBets=[], localBotTimeout=null, localAddedBots=0, localTotalBots=0;
+
+function startLocalGame(){
+  localBets=[];
+  document.getElementById("bscroll").innerHTML="";
+  localTotalBots=rnd(8,30); localAddedBots=0;
+  timerV=15;
+  if(timerInt) clearInterval(timerInt);
+  startTimerLocal();
+  schedLocalBots();
+}
+
+function schedLocalBots(){
+  if(localAddedBots>=localTotalBots) return;
+  localBotTimeout=setTimeout(()=>{
+    const b=genBot(); localBets.push(b); addRow(b); localAddedBots++;
+    schedLocalBots();
+  }, rnd(300,1500));
+}
+
+function startTimerLocal(){
+  showBet();
+  document.getElementById("phasebadge").textContent="MISES OUVERTES";
+  const ring=document.getElementById("ring");
+  ring.style.stroke="#22c55e";
+  ring.style.strokeDashoffset="0";
+  document.getElementById("tnum").textContent=timerV;
+  timerInt=setInterval(()=>{
+    timerV--;
+    document.getElementById("tnum").textContent=timerV;
+    ring.style.strokeDashoffset=125.66*(1-timerV/15);
+    if(timerV<=5) ring.style.stroke="#ef4444";
+    else if(timerV<=9) ring.style.stroke="#f59e0b";
+    if(timerV<=0){ clearInterval(timerInt); timerInt=null; localDrawPhase(); }
+  },1000);
+}
+
+function localDrawPhase(){
+  if(localBotTimeout) clearTimeout(localBotTimeout);
+  const win=Math.floor(Math.random()*6);
+  showWheelResult(win, ()=>{
+    // Gains locaux
+    const myBet=localBets.find(b=>!b.is_bot);
+    if(myBet && myBet.num===win){ bal+=myBet.mise*5; fmtBal(); showBanner(`🎉 Gagné ! +${myBet.mise*5} XAF`,"#22c55e"); }
+    hist.unshift(win); if(hist.length>10) hist.pop();
+    renderHist(hist);
+    setTimeout(()=>startLocalGame(), 4000);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  AFFICHAGE TABLEAU
+// ═══════════════════════════════════════════
+let totalMise=0, totalJoueurs=0;
+
+function addRow(p, prepend=false){
+  const body=document.getElementById("bscroll");
+  const row=document.createElement("div");
+  row.className="brow"+(p.real?" real":"");
+  const nb=`<span class="nb2" style="background:${NC[p.num]}">${p.num}</span>`;
+  row.innerHTML=`<div class="pcell"><span style="font-size:13px">${p.flag}</span><span class="pn">${p.real?"⭐ "+p.name:p.name}</span></div><div class="mc">${p.mise.toLocaleString()}</div><div class="nc">${nb}</div>`;
+  if(prepend&&body.firstChild) body.insertBefore(row,body.firstChild);
+  else body.appendChild(row);
+  if(!prepend) body.scrollTop=body.scrollHeight;
+  // Mise à jour stats
+  totalMise+=p.mise; totalJoueurs++;
+  document.getElementById("totalmise").textContent=totalMise.toLocaleString();
+  document.getElementById("pcount").textContent=totalJoueurs;
+}
+
+function resetTable(){
+  document.getElementById("bscroll").innerHTML="";
+  totalMise=0; totalJoueurs=0;
+  document.getElementById("totalmise").textContent="0";
+  document.getElementById("pcount").textContent="0";
+}
+
+// ═══════════════════════════════════════════
+//  ROUE CANVAS
+// ═══════════════════════════════════════════
+function drawW(ang){
+  const cv=document.getElementById("wcanvas"),cx=cv.getContext("2d"),c=95,r=92;
+  cx.clearRect(0,0,190,190);
+  for(let i=0;i<6;i++){
+    const s=ang+i*Math.PI*2/6,e=s+Math.PI*2/6;
+    cx.beginPath();cx.moveTo(c,c);cx.arc(c,c,r,s,e);cx.closePath();
+    cx.fillStyle=NC[i];cx.fill();cx.strokeStyle="#0d0d0d";cx.lineWidth=2;cx.stroke();
+    cx.save();cx.translate(c,c);cx.rotate(s+Math.PI/6);cx.translate(r*.65,0);cx.rotate(Math.PI/2);
+    cx.fillStyle="#fff";cx.font="bold 17px sans-serif";cx.textAlign="center";cx.textBaseline="middle";
+    cx.fillText(String(i),0,0);cx.restore();
+  }
+  cx.beginPath();cx.arc(c,c,11,0,Math.PI*2);cx.fillStyle="#0d0d0d";cx.fill();
+  cx.strokeStyle="#f0b90b";cx.lineWidth=2;cx.stroke();
+}
+
+function spinTo(target,cb){
+  const slice=Math.PI*2/6,spins=5;
+  const tgt=-Math.PI/2-(target*slice+slice/2);
+  const total=Math.PI*2*spins+((tgt-wAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  const dur=3600,t0=performance.now(),sa=wAngle;
+  function fr(now){
+    const t=Math.min((now-t0)/dur,1),e=1-Math.pow(1-t,4);
+    wAngle=sa+total*e; drawW(wAngle);
+    if(t<1){wAnimId=requestAnimationFrame(fr);}
+    else{wAngle=sa+total;drawW(wAngle);if(cb)cb();}
+  }
+  wAnimId=requestAnimationFrame(fr);
+}
+
+function showWheelResult(win, cb){
+  showWheel(); drawW(wAngle);
+  document.getElementById("wnum").style.opacity="0";
+  setTimeout(()=>{
+    spinTo(win,()=>{
+      const el=document.getElementById("wnum");
+      el.textContent=win; el.style.color=NC[win]; el.style.opacity="1";
+      setTimeout(()=>{ showPodiumResult(win); if(cb)cb(); },700);
+    });
+  },300);
+}
+
+function showPodiumResult(win){
+  showPodium();
+  document.getElementById("pod-num").textContent=win;
+  document.getElementById("pod-num").style.color=NC[win];
+  const allBets=[...localBets];
+  const winners=allBets.filter(b=>b.num===win);
+  const wlist=document.getElementById("winners");
+  wlist.innerHTML="";
+  if(!winners.length){ wlist.innerHTML=`<div style="color:#555;font-size:.8rem;padding:.75rem">Aucun gagnant ce tour</div>`; return; }
+  winners.slice(0,6).forEach((w,i)=>{
+    const c=document.createElement("div"); c.className="wcard";
+    const medal=i===0?"🥇":i===1?"🥈":"🥉";
+    c.innerHTML=`<span style="font-size:14px">${medal}</span><div><div class="wcard-name">${w.flag} ${w.name}${w.real?" ⭐":""}</div><div class="wcard-det">Mise: ${w.mise.toLocaleString()} XAF · N°${w.num}</div></div>`;
+    wlist.appendChild(c);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  PANNEAUX (SHOW/HIDE)
+// ═══════════════════════════════════════════
+function showBet(){ document.getElementById("bet-panel").style.display="flex"; document.getElementById("wheel-panel").style.display="none"; document.getElementById("podium-panel").style.display="none"; resetTable(); }
+function showWheel(){ document.getElementById("bet-panel").style.display="none"; document.getElementById("wheel-panel").style.display="flex"; document.getElementById("podium-panel").style.display="none"; }
+function showPodium(){ document.getElementById("bet-panel").style.display="none"; document.getElementById("wheel-panel").style.display="none"; document.getElementById("podium-panel").style.display="flex"; }
+
+function fmtBal(){ document.getElementById("bal").textContent=bal.toLocaleString()+" XAF"; }
+
+function renderHist(h){ if(h) hist=h; document.getElementById("hnums").innerHTML=hist.map(n=>`<div class="hn" style="background:${NC[n]}">${n}</div>`).join(""); }
+
+function showBanner(msg,col){
+  const b=document.createElement("div");
+  b.style.cssText=`position:absolute;top:70px;left:50%;transform:translateX(-50%);background:${col};color:#0d0d0d;padding:.5rem 1.25rem;border-radius:20px;font-weight:700;font-size:.8rem;z-index:60;white-space:nowrap`;
+  b.textContent=msg; document.getElementById("NK").appendChild(b);
+  setTimeout(()=>b.remove(),3000);
+}
+
+// ═══════════════════════════════════════════
+//  MISE (avec appel bot si connecté)
+// ═══════════════════════════════════════════
+async function validerMise(){
+  const err=document.getElementById("merr");
+  if(selectedNum<0){ err.textContent="Choisissez un numéro"; return; }
+  const inp=parseInt(document.getElementById("mise-inp").value)||0;
+  if(inp<1){ err.textContent="Minimum 1 XAF"; return; }
+  if(inp>500){ err.textContent="Maximum 500 XAF"; return; }
+  if(inp>bal){ err.textContent="Solde insuffisant"; return; }
+
+  err.textContent="Envoi en cours...";
+  try{
+    const res=await fetch(`${API}/api/mise`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,mise:inp,numero:selectedNum})
+    });
+    const data=await res.json();
+    if(data.success){
+      bal=data.new_solde; fmtBal();
+      localBets.push({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,is_bot:false,real:true});
+      addRow({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,real:true},true);
+      closeOv();
+      showBanner(`Mise de ${inp} XAF sur N°${selectedNum} !`,"#f0b90b");
+    } else { err.textContent=data.message; }
+  } catch(e){
+    // Mode autonome : mise locale
+    bal-=inp; fmtBal();
+    localBets.push({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,is_bot:false,real:true});
+    addRow({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,real:true},true);
+    closeOv();
+    showBanner(`Mise de ${inp} XAF sur N°${selectedNum} !`,"#f0b90b");
+  }
+}
+
+// ═══════════════════════════════════════════
+//  DÉPÔT (avec appel bot)
+// ═══════════════════════════════════════════
+let depotMontant=0;
+
+async function initDepot(){
+  const v=parseInt(document.getElementById("dep-amount").value)||0;
+  const tel=document.getElementById("dep-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100){ err.textContent="Minimum 100 XAF"; return; }
+  if(!tel){ err.textContent="Entrez votre numéro"; return; }
+  err.textContent="Envoi en cours...";
+  try{
+    const res=await fetch(`${API}/api/depot`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
+    });
+    const data=await res.json();
+    err.style.color=data.success?"#22c55e":"#ef4444";
+    err.textContent=data.message;
+  } catch(e){
+    err.textContent="Serveur non disponible. Contactez le support.";
+  }
+}
+
+async function initRetrait(){
+  const v=parseInt(document.getElementById("ret-amount").value)||0;
+  const tel=document.getElementById("ret-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100){ err.textContent="Minimum 100 XAF"; return; }
+  if(v>bal){ err.textContent="Solde insuffisant"; return; }
+  if(!tel){ err.textContent="Entrez votre numéro"; return; }
+  err.textContent="Envoi en cours...";
+  try{
+    const res=await fetch(`${API}/api/retrait`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
+    });
+    const data=await res.json();
+    if(data.success){ bal=data.new_solde; fmtBal(); }
+    err.style.color=data.success?"#22c55e":"#ef4444";
+    err.textContent=data.message;
+  } catch(e){
+    err.textContent="Serveur non disponible.";
+  }
+}
+
+// ═══════════════════════════════════════════
+//  PANNEAUX OVERLAY
+// ═══════════════════════════════════════════
+function selNum(n){
+  selectedNum=n;
+  for(let i=0;i<6;i++){ const el=document.getElementById("ng"+i); if(el)el.classList.toggle("sel",i===n); }
+}
+
+function openPanel(type){
+  const ov=document.getElementById("ov"),box=document.getElementById("ovbox");
+  ov.style.display="flex";
+
+  if(type==="histo"){
+    box.innerHTML=`<div class="otitle">📊 Historique des tirages</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:.5rem 0">
+        ${hist.map(n=>`<div style="background:${NC[n]};color:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;margin:0 auto">${n}</div>`).join("")}
+        ${!hist.length?`<div style="grid-column:1/-1;color:#555;font-size:.8rem;text-align:center">Aucun tirage encore</div>`:""}
+      </div>
+      <div style="font-size:.65rem;color:#555;text-align:center;margin-top:.5rem">10 derniers numéros gagnants</div>`;
+  }
+
+  else if(type==="mise"){
+    selectedNum=-1;
+    box.innerHTML=`<div class="otitle">💰 Placer une mise</div>
+      <div style="font-size:.75rem;color:#888;margin-bottom:.5rem">Choisissez un numéro (0–5)</div>
+      <div class="numgrid" id="ngrid">
+        ${[0,1,2,3,4,5].map(n=>`<div class="ngb" style="background:${NC[n]}" onclick="selNum(${n})" id="ng${n}">${n}</div>`).join("")}
+      </div>
+      <div style="font-size:.75rem;color:#888;margin:.5rem 0 .25rem">Montant (1 – 500 XAF)</div>
+      <input class="inp" id="mise-inp" type="number" min="1" max="500" placeholder="Ex: 100">
+      <div class="oerr" id="merr"></div>
+      <div style="font-size:.7rem;color:#888;margin-bottom:.5rem">Solde: <span style="color:#f0b90b">${bal.toLocaleString()} XAF</span></div>
+      <button class="obtn" onclick="validerMise()">Confirmer la mise</button>`;
+  }
+
+  else if(type==="banque"){
+    bankTab="depot"; renderBank(box);
+  }
+
+  else if(type==="amis"){
+    const lien=`https://t.me/VotreBot?start=ref_${userId}`;
+    box.innerHTML=`<div class="otitle">👥 Parrainage & Amis</div>
+      <div style="font-size:.75rem;color:#888;margin-bottom:.5rem">Votre lien de parrainage</div>
+      <div style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:8px;padding:.75rem;font-size:.72rem;color:#888;margin-bottom:.75rem;word-break:break-all">${lien}</div>
+      <button class="obtn" onclick="navigator.clipboard.writeText('${lien}').then(()=>showBanner('Lien copié !','#22c55e'))">Copier le lien</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.75rem">
+        <div style="background:#111;border-radius:8px;padding:.6rem;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#f0b90b">3</div><div style="font-size:.65rem;color:#555">Filleuls</div></div>
+        <div style="background:#111;border-radius:8px;padding:.6rem;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#f0b90b">750 F</div><div style="font-size:.65rem;color:#555">Bonus gagné</div></div>
+      </div>`;
+  }
+
+  else if(type==="aide"){
+    box.innerHTML=`<div class="otitle">❓ Guide</div>
+      <div style="max-height:320px;overflow-y:auto">
+        ${[
+          ["1","Ouvrez ce casino depuis Telegram. Votre compte est lié à votre profil."],
+          ["2","Entrez votre PIN à 5 chiffres pour accéder au casino."],
+          ["3","Appuyez sur 💰 MISER, choisissez un numéro (0-5) et une mise (1-500 XAF)."],
+          ["4","Attendez la fin du chrono. La roue tourne et le numéro gagnant est tiré."],
+          ["5","Si votre numéro sort → vous gagnez 5× votre mise instantanément !"],
+          ["6","Pour déposer : Banque → Dépôt → envoyez le montant et attendez."],
+          ["7","Pour retirer : Banque → Retrait → entrez votre numéro Mobile Money."],
+        ].map(([n,t])=>`<div class="tut-step"><div class="tut-num">${n}</div><div class="tut-txt">${t}</div></div>`).join("")}
+      </div>`;
+  }
+}
+
+function renderBank(box){
+  box.innerHTML=`<div class="otitle">💳 Banque</div>
+    <div class="tab2">
+      <div class="tabopt${bankTab==="depot"?" active":""}" onclick="bankTab='depot';renderBank(document.getElementById('ovbox'))">Dépôt</div>
+      <div class="tabopt${bankTab==="retrait"?" active":""}" onclick="bankTab='retrait';renderBank(document.getElementById('ovbox'))">Retrait</div>
+    </div>
+    ${bankTab==="depot"?`
+      <div style="font-size:.75rem;color:#888;margin-bottom:.5rem">Dépôt via Mobile Money (traitement manuel)</div>
+      <input class="inp" type="number" id="dep-amount" placeholder="Montant (min 100 XAF)">
+      <input class="inp" type="text" id="dep-tel" placeholder="Votre numéro Mobile Money">
+      <button class="obtn" onclick="initDepot()">Envoyer la demande</button>
+      <div style="background:#111;border-radius:8px;padding:.6rem;margin-top:.6rem;font-size:.7rem;color:#888">
+        Après envoi, transférez le montant au numéro admin.<br>Crédit sous 5-15 min.
+      </div>
+    `:`
+      <div style="font-size:.75rem;color:#888;margin-bottom:.5rem">Solde : <span style="color:#f0b90b">${bal.toLocaleString()} XAF</span></div>
+      <input class="inp" type="number" id="ret-amount" placeholder="Montant à retirer (min 100 XAF)">
+      <input class="inp" type="text" id="ret-tel" placeholder="Numéro Mobile Money">
+      <button class="obtn" onclick="initRetrait()">Demander le retrait</button>
+    `}
+    <div class="oerr" id="berr" style="margin-top:.5rem"></div>`;
+}
+
+function closeOv(){ document.getElementById("ov").style.display="none"; }
+document.getElementById("ov").addEventListener("click",function(e){ if(e.target===this)closeOv(); });
+
+// Init roue
+drawW(0);
+</script>
+</body>
+</html>
