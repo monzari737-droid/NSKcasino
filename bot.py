@@ -1328,17 +1328,21 @@ if __name__ == "__main__":
     except Exception as e:
         log.warning(f"set_my_commands: {e}")
 
-    # 6. Flask en thread
-    def run_flask():
-        app.run(host="0.0.0.0", port=FLASK_PORT, debug=False, use_reloader=False)
+@app.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    if request.headers.get('content-type') == 'application/json':
+        json_string = request.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return '', 200
+    return abort(403)
 
-    threading.Thread(target=run_flask, daemon=True, name="Flask").start()
-    log.info(f"✅ Flask API démarré sur le port {FLASK_PORT}")
+@app.route('/')
+def index():
+    # Configure le webhook à chaque fois que la page d'accueil est chargée
+    bot.remove_webhook()
+    bot.set_webhook(url=f"https://railway.app{TOKEN}")
+    return "<h1>✅ NSK Casino est en ligne</h1>", 200
 
-    # 7. Délai anti-conflit Telegram
-    log.info("Attente 3s avant polling...")
-    time.sleep(3)
 
-    # 8. Polling
-    log.info("🤖 Bot en ligne (Polling)... Prêt !")
-    bot.infinity_polling(skip_pending=True, timeout=30, long_polling_timeout=20)
+   
