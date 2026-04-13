@@ -1,6 +1,6 @@
 pyTelegramBotAPI==4.20.0
 Flask==3.0.3
-psycopg2-binary==2.9.9
+psycopg2-binary
 redis==5.0.6
 python-dateutil==2.9.0
 gunicorn==22.0.0
