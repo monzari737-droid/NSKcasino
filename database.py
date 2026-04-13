@@ -672,7 +672,7 @@ def get_admin_stats() -> dict:
         "parrainages":      parrainages,
         "depots_attente":   depots_attente,
         "retraits_attente": retraits_attente,
-    }def generate_pin():
+    def generate_pin():
     """Génère un code PIN unique de 5 chiffres."""
     return str(random.randint(10000, 99999))
 
