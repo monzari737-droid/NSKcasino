@@ -66,7 +66,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
 .hn-tip{display:none;position:absolute;bottom:30px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid #2a2a2a;border-radius:7px;padding:.3rem .6rem;font-size:.6rem;color:#ccc;white-space:nowrap;z-index:20;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.5)}
 .hn:hover .hn-tip{display:block}
 
-/* ══ CONTENU PRINCIPAL ══ */
+/* ══ CONTENU ══ */
 #content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 
 /* ── Phase Mises ── */
@@ -161,12 +161,14 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
 @keyframes bannerIn{from{opacity:0;top:55px}to{opacity:1;top:68px}}
 .divider{height:1px;background:#1a1a1a;margin:.6rem 0}
 .info-box{background:#0d0d0d;border-radius:8px;padding:.65rem;font-size:.68rem;color:#444;line-height:1.55;margin-top:.5rem}
+/* Predictor badge */
+.pred-badge{background:linear-gradient(135deg,#7c3aed,#f0b90b);border-radius:8px;padding:.5rem .8rem;font-size:.7rem;font-weight:700;color:#fff;text-align:center;margin-bottom:.5rem;cursor:pointer}
 </style>
 </head>
 <body>
 <div id="NK">
 
-<!-- ══════ ÉCRAN 1 : VERROU SERVEUR ══════ -->
+<!-- ══ VERROU SERVEUR ══ -->
 <div id="srv-lock">
   <div class="lock-logo">NKAP EXPRESS</div>
   <div class="lock-sub">Casino Mondial</div>
@@ -180,14 +182,13 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
     <div class="cd-unit">secondes</div>
   </div>
   <div class="srv-msg" id="srv-msg-bot">Veuillez patienter — le serveur détermine l'heure d'ouverture.</div>
-  <!-- Animation quand le serveur ouvre -->
   <div class="open-anim" id="open-anim">
     <div class="open-circle">🎰</div>
     <div style="color:#f0b90b;font-weight:700;font-size:.95rem;letter-spacing:1px">Casino ouvert !</div>
   </div>
 </div>
 
-<!-- ══════ ÉCRAN 2 : PIN AUTH ══════ -->
+<!-- ══ AUTH PIN ══ -->
 <div id="auth">
   <div class="auth-logo">NKAP EXPRESS</div>
   <div class="auth-sub">Identification sécurisée</div>
@@ -195,10 +196,8 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
     <div class="auth-title">Entrez votre code secret</div>
     <div class="auth-name" id="auth-name"></div>
     <div class="pdots">
-      <div class="pd" id="pd0"></div>
-      <div class="pd" id="pd1"></div>
-      <div class="pd" id="pd2"></div>
-      <div class="pd" id="pd3"></div>
+      <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
       <div class="pd" id="pd4"></div>
     </div>
     <div class="ppad">
@@ -220,7 +219,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
   </div>
 </div>
 
-<!-- ══════ HEADER FIXE ══════ -->
+<!-- ══ HEADER ══ -->
 <div id="hdr">
   <div class="live"><div class="dot"></div>EN DIRECT</div>
   <div class="tring">
@@ -238,7 +237,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
   </div>
 </div>
 
-<!-- ══════ HISTBAR — 20 derniers résultats (PostgreSQL) ══════ -->
+<!-- ══ HISTBAR ══ -->
 <div id="histbar">
   <span class="hl">Résultats:</span>
   <div class="hnums" id="hnums">
@@ -246,10 +245,10 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
   </div>
 </div>
 
-<!-- ══════ CONTENU (CHEF D'ORCHESTRE) ══════ -->
+<!-- ══ CONTENU ══ -->
 <div id="content">
 
-  <!-- PANNEAU 1 : TABLE DES MISES (Phase betting) -->
+  <!-- PANEL 1 : TABLE DES MISES -->
   <div id="bet-panel">
     <div class="bstats">
       <div class="bs">Joueurs: <span id="pcount">0</span></div>
@@ -264,7 +263,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
     <div class="bscroll" id="bscroll"></div>
   </div>
 
-  <!-- PANNEAU 2 : ROUE (Phase result) -->
+  <!-- PANEL 2 : ROUE -->
   <div id="wheel-panel">
     <div class="wlbl">Tirage en cours</div>
     <div class="wheel-wrap">
@@ -274,7 +273,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
     <div class="wnum" id="wnum" style="opacity:0">—</div>
   </div>
 
-  <!-- PANNEAU 3 : PODIUM (Phase podium) -->
+  <!-- PANEL 3 : PODIUM -->
   <div id="pod-panel">
     <div class="pod-title">Numéro gagnant</div>
     <div class="pod-num" id="pod-num">—</div>
@@ -282,7 +281,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
     <div id="winners" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:.45rem;max-height:240px;overflow-y:auto"></div>
   </div>
 
-  <!-- PANNEAU 4 : CLASSEMENT (optionnel) -->
+  <!-- PANEL 4 : CLASSEMENT -->
   <div id="lb-panel">
     <div class="lb-title">🏆 Top du Jour</div>
     <div id="lb-rows"></div>
@@ -290,7 +289,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
 
 </div><!-- #content -->
 
-<!-- ══════ NAVIGATION BAS ══════ -->
+<!-- ══ NAV BAS ══ -->
 <div id="nav">
   <button class="nvb" id="nav-histo" onclick="openPanel('histo')">
     <span class="ico">📊</span>HISTO
@@ -309,7 +308,7 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
   </button>
 </div>
 
-<!-- ══════ OVERLAY PANNEAUX ══════ -->
+<!-- ══ OVERLAY ══ -->
 <div class="ov" id="ov">
   <div style="position:relative;width:100%;max-width:320px">
     <button class="ocls" onclick="closeOv()">✕</button>
@@ -320,118 +319,99 @@ body{background:#0a0a0a;display:flex;justify-content:center;min-height:100vh;fon
 </div><!-- #NK -->
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  ██████  CONFIG — MODIFIEZ UNIQUEMENT CETTE LIGNE
-// ═══════════════════════════════════════════════════════════
-const API_URL = window.location.origin + "/api";
+// ═══════════════════════════════════════════════════════
+//  CONFIG — API auto-détecté (Railway / local / ngrok)
+// ═══════════════════════════════════════════════════════
+const API = window.location.origin;
 
-
-//           ↑ Collez votre URL ngrok ici (sans slash final)
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  CONSTANTES
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 const NC     = ["#374151","#2563eb","#059669","#d97706","#7c3aed","#dc2626"];
-const CIRC   = 2 * Math.PI * 20;  // circonférence ring SVG (r=20)
+const CIRC   = 2 * Math.PI * 20;
 const MEDALS = ["🥇","🥈","🥉","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  ÉTAT GLOBAL
-// ═══════════════════════════════════════════════════════════
-let userId   = null;
-let userPin  = "";
-let userName = "";
-let bal      = 0;
-let hist     = [];       // tableau de numéros [3,1,5,...]
-let histFull = [];       // tableau d'objets enrichis depuis PostgreSQL
-let phase    = "betting";
-let wAngle   = 0;
-let wAnimId  = null;
-let timerV   = 15;
-let timerInt = null;
-let lastTourId  = "";
-let lastPhase   = "";
-let botsShown   = new Set();
-let selectedNum = -1;
-let bankTab     = "depot";
-let totalMise   = 0;
-let totalJoueurs= 0;
-let pollingInt  = null;
-let srvPollInt  = null;
+// ═══════════════════════════════════════════════════════
+let userId          = null;
+let userPin         = "";
+let userName        = "";
+let bal             = 0;
+let hist            = [];
+let histFull        = [];
+let phase           = "betting";
+let wAngle          = 0;
+let wAnimId         = null;
+let timerV          = 15;
+let timerInt        = null;
+let lastTourId      = "";
+let lastPhase       = "";
+let botsShown       = new Set();
+let selectedNum     = -1;
+let bankTab         = "depot";
+let totalMise       = 0;
+let totalJoueurs    = 0;
+let pollingInt      = null;
+let srvPollInt      = null;
+let predictorActive = false;
 
-// ═══════════════════════════════════════════════════════════
-//  POIGNÉE DE MAIN TELEGRAM
-//  → Récupère l'ID et le nom Telegram réels
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  TELEGRAM INIT
+// ═══════════════════════════════════════════════════════
 (function initTelegram(){
   try{
     if(window.Telegram && window.Telegram.WebApp){
       const tg = window.Telegram.WebApp;
       tg.expand();
-      tg.setHeaderColor('#0d0d0d');
-      tg.setBackgroundColor('#0d0d0d');
+      tg.setHeaderColor && tg.setHeaderColor('#0d0d0d');
+      tg.setBackgroundColor && tg.setBackgroundColor('#0d0d0d');
       const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
-      if(u){
-        userId   = u.id;
-        userName = u.first_name || u.username || "";
-      }
+      if(u){ userId = u.id; userName = u.first_name || u.username || ""; }
     }
-  } catch(e){}
-  // Fallback navigateur
+  }catch(e){}
   if(!userId){ userId = 100000001; userName = "Test"; }
-  document.getElementById("auth-name").textContent =
-    userName ? "Joueur : " + userName : "";
+  const el = document.getElementById("auth-name");
+  if(el) el.textContent = userName ? "Joueur : " + userName : "";
 })();
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  ÉTAPE 1 — VERROU SERVEUR
-//  Le site interroge /api/server_status toutes les 2s.
-//  Le bot répond {open:true, open_key:"...", countdown:0}.
-//  Quand open=true → on retire le verrou et on montre l'AUTH.
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 async function checkServerStatus(){
   try{
-    const r   = await fetch(`${API}/api/server_status`, {cache:"no-store"});
-    const d   = await r.json();
+    const res  = await fetch(`${API}/api/server_status`, {cache:"no-store"});
+    const d    = await res.json();
     const cdEl = document.getElementById("cd-num");
     const topEl= document.getElementById("srv-msg-top");
     const pulse= document.getElementById("srv-pulse");
 
     if(d.open && d.open_key){
-      // ✅ SERVEUR A OUVERT — on retire le verrou
       clearInterval(srvPollInt);
       pulse.style.background = "#22c55e";
       topEl.textContent = "Bienvenue !";
-      document.getElementById("cd-box").style.display        = "none";
-      document.getElementById("srv-msg-bot").style.display   = "none";
+      document.getElementById("cd-box").style.display      = "none";
+      document.getElementById("srv-msg-bot").style.display = "none";
       const oa = document.getElementById("open-anim");
       oa.style.display = "flex";
       setTimeout(()=>{
         document.getElementById("srv-lock").style.display = "none";
         showAuth();
       }, 1200);
-
     } else if(d.countdown > 0){
-      // ⏳ COMPTEUR EN COURS
       cdEl.textContent = d.countdown;
       topEl.textContent = "Ouverture prévue...";
-      document.getElementById("srv-msg-bot").textContent =
-        "Le casino ouvre bientôt. Restez connecté.";
-
+      document.getElementById("srv-msg-bot").textContent = "Le casino ouvre bientôt. Restez connecté.";
     } else {
-      // 🔒 FERMÉ
       cdEl.textContent = "—";
       topEl.textContent = "Site temporairement fermé";
-      document.getElementById("srv-msg-bot").textContent =
-        "L'administrateur ouvrira le casino bientôt.";
+      document.getElementById("srv-msg-bot").textContent = "L'administrateur ouvrira le casino bientôt.";
     }
-  } catch(e){
-    // Ngrok pas encore prêt — on réessaie
+  }catch(e){
     document.getElementById("srv-msg-top").textContent = "Connexion en cours...";
   }
 }
 
-// Lance le polling serveur immédiatement
 srvPollInt = setInterval(checkServerStatus, 2000);
 checkServerStatus();
 
@@ -439,16 +419,14 @@ function showAuth(){
   document.getElementById("auth").style.display = "flex";
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  ÉTAPE 2 — AUTH PIN
-//  Le bot vérifie : user_id + pin_hash → renvoie le vrai solde
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 let pinv = "";
 
 function ap(d){
   if(pinv.length >= 5) return;
-  pinv += d;
-  updPd();
+  pinv += d; updPd();
   if(pinv.length === 5) setTimeout(doAuth, 160);
 }
 function dp(){ pinv = pinv.slice(0,-1); updPd(); }
@@ -463,48 +441,40 @@ async function doAuth(){
   if(pinv.length !== 5){ errEl.textContent="5 chiffres requis"; pinv=""; updPd(); return; }
   errEl.textContent = "";
   infoEl.textContent = "Vérification en cours...";
-
   try{
     const res  = await fetch(`${API}/api/auth`, {
-      method : "POST",
-      headers: {"Content-Type":"application/json",
-                "ngrok-skip-browser-warning":"true"},
-      body   : JSON.stringify({user_id: userId, pin: pinv})
+      method:"POST",
+      headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
+      body:JSON.stringify({user_id:userId, pin:pinv})
     });
     const data = await res.json();
-
     if(data.success){
-      // ✅ HANDSHAKE RÉUSSI
-      userPin  = pinv;
-      bal      = data.solde  || 0;
-      histFull = data.history_full || [];
-      hist     = data.history_nums || histFull.map(h=>h.numero);
+      userPin          = pinv;
+      bal              = data.solde  || 0;
+      histFull         = data.history_full || [];
+      hist             = data.history_nums || histFull.map(h=>h.numero);
+      predictorActive  = data.predictor_active || false;
       if(data.custom_name) userName = data.custom_name;
-
-      // On masque l'auth et on entre dans le casino
       document.getElementById("auth").style.display = "none";
       fmtBal();
       renderHist();
-      startPolling();        // polling synchronisé
-      switchPanel("bet");    // CHEF D'ORCHESTRE : panneau Mises
-
+      startPolling();
+      switchPanel("bet");
     } else {
       errEl.textContent  = data.message || "Code incorrect";
       infoEl.textContent = "Vérification via le serveur bot";
       pinv = ""; updPd();
     }
-  } catch(e){
-    errEl.textContent  = "Serveur indisponible. Vérifiez ngrok.";
-    infoEl.textContent = API;
+  }catch(e){
+    errEl.textContent  = "Serveur indisponible.";
+    infoEl.textContent = "";
     pinv = ""; updPd();
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  ÉTAPE 3 — POLLING (synchronisation continue)
-//  Toutes les 2s → /api/state → met à jour solde + historique
-//  + CHEF D'ORCHESTRE (switche les panneaux au bon moment)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  ÉTAPE 3 — POLLING (toutes les 2s)
+// ═══════════════════════════════════════════════════════
 function startPolling(){
   fetchState();
   pollingInt = setInterval(fetchState, 2000);
@@ -514,79 +484,62 @@ async function fetchState(){
   try{
     const res = await fetch(
       `${API}/api/state?user_id=${userId}`,
-      {cache:"no-store",
-       headers:{"ngrok-skip-browser-warning":"true"}}
+      {cache:"no-store", headers:{"ngrok-skip-browser-warning":"true"}}
     );
     const d = await res.json();
 
-    // ── Mise à jour du solde (chiffre réel du bot)
     if(d.solde !== undefined && d.solde !== null){
       const prev = bal;
       bal = parseFloat(d.solde);
       fmtBal();
       if(bal > prev){
-        // Flash vert si gain
         const balEl = document.getElementById("bal");
         balEl.classList.add("flash");
         setTimeout(()=>balEl.classList.remove("flash"), 800);
       }
     }
 
-    // ── Mise à jour de l'historique (source PostgreSQL — identique au bot)
     if(d.history_full && d.history_full.length){
       histFull = d.history_full;
       hist     = d.history_nums || histFull.map(h=>h.numero);
       renderHist();
     }
 
-    // ── CHEF D'ORCHESTRE — gestion des phases
     orchestrate(d);
-
-  } catch(e){
-    // Perte de connexion ngrok → on continue silencieusement
-  }
+  }catch(e){ /* silent */ }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  CHEF D'ORCHESTRE
-//  Reçoit l'état du bot et décide quel panneau afficher
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function orchestrate(d){
   const p   = d.phase;
   const tid = d.tour_id;
 
-  // Nouveau tour → réinitialiser le tableau
   if(tid !== lastTourId){
     lastTourId = tid;
     botsShown.clear();
     resetTable();
   }
 
-  // Injecter les bots non encore affichés (progressif)
   if(d.bots && d.bots.length){
     d.bots.forEach(b=>{
       const k = (b.flag||"")+(b.name||"")+(b.mise||0)+(b.num||0);
-      if(!botsShown.has(k)){
-        botsShown.add(k);
-        addRow(b);
-      }
+      if(!botsShown.has(k)){ botsShown.add(k); addRow(b); }
     });
   }
   document.getElementById("pcount").textContent = d.total_players || 0;
 
-  // ── PHASE MISES ──────────────────────────────
   if(p === "betting"){
     if(lastPhase !== "betting"){
       lastPhase = "betting";
       timerV    = 15;
       clearLocalTimer();
-      switchPanel("bet");                    // ← CHEF : montre la table
+      switchPanel("bet");
       document.getElementById("phasebadge").textContent = "MISES OUVERTES";
       document.getElementById("phasebadge").className   = "";
       startTimerLocal();
     }
-
-  // ── PHASE RÉSULTAT / ROUE ────────────────────
   } else if(p === "result"){
     if(lastPhase !== "result"){
       lastPhase = "result";
@@ -595,33 +548,31 @@ function orchestrate(d){
       if(win !== null && win !== undefined){
         document.getElementById("phasebadge").textContent = "TIRAGE EN COURS";
         document.getElementById("phasebadge").className   = "result";
-        switchPanel("wheel");              // ← CHEF : montre la roue
+        switchPanel("wheel");
         animateWheel(win);
       }
     }
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  CHEF D'ORCHESTRE — switchPanel()
-//  La SEULE fonction qui change les panneaux.
-//  Elle cache tout puis montre le bon.
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  switchPanel — LA SEULE FONCTION QUI CHANGE LES PANELS
+// ═══════════════════════════════════════════════════════
 function switchPanel(name){
-  const panels = ["bet-panel","wheel-panel","pod-panel","lb-panel"];
-  panels.forEach(id=>{ document.getElementById(id).style.display="none"; });
-  const map = {bet:"bet-panel", wheel:"wheel-panel", pod:"pod-panel", lb:"lb-panel"};
+  ["bet-panel","wheel-panel","pod-panel","lb-panel"].forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+  const map={bet:"bet-panel",wheel:"wheel-panel",pod:"pod-panel",lb:"lb-panel"};
   if(map[name]) document.getElementById(map[name]).style.display="flex";
-  // Active le bon bouton nav
   ["histo","banque","amis","top"].forEach(id=>{
-    const el = document.getElementById("nav-"+id);
+    const el=document.getElementById("nav-"+id);
     if(el) el.classList.remove("active");
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-//  TIMER LOCAL (approximatif, synchronisé par le polling)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  TIMER LOCAL
+// ═══════════════════════════════════════════════════════
 function startTimerLocal(){
   const ring = document.getElementById("ring");
   ring.style.stroke = "#22c55e";
@@ -631,116 +582,106 @@ function startTimerLocal(){
     timerV = Math.max(0, timerV - 1);
     document.getElementById("tnum").textContent = timerV;
     ring.style.strokeDashoffset = CIRC * (1 - timerV / 15);
-    if(timerV <= 5)       ring.style.stroke = "#ef4444";
-    else if(timerV <= 9)  ring.style.stroke = "#f59e0b";
+    if(timerV <= 5)      ring.style.stroke = "#ef4444";
+    else if(timerV <= 9) ring.style.stroke = "#f59e0b";
     if(timerV === 0) clearLocalTimer();
   }, 1000);
 }
-
 function clearLocalTimer(){
-  if(timerInt){ clearInterval(timerInt); timerInt = null; }
+  if(timerInt){ clearInterval(timerInt); timerInt=null; }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  ANIMATION ROUE (Canvas)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  ROUE CANVAS
+// ═══════════════════════════════════════════════════════
 function drawW(ang){
-  const cv = document.getElementById("wcanvas");
-  if(!cv) return;
-  const cx = cv.getContext("2d");
-  const c = 105, r = 100;
+  const cv=document.getElementById("wcanvas"); if(!cv) return;
+  const cx=cv.getContext("2d"), c=105, r=100;
   cx.clearRect(0,0,210,210);
   for(let i=0;i<6;i++){
-    const s = ang + i*Math.PI*2/6;
-    const e = s + Math.PI*2/6;
+    const s=ang+i*Math.PI*2/6, e=s+Math.PI*2/6;
     cx.beginPath(); cx.moveTo(c,c); cx.arc(c,c,r,s,e); cx.closePath();
-    cx.fillStyle = NC[i]; cx.fill();
-    cx.strokeStyle = "#0d0d0d"; cx.lineWidth = 2; cx.stroke();
+    cx.fillStyle=NC[i]; cx.fill();
+    cx.strokeStyle="#0d0d0d"; cx.lineWidth=2; cx.stroke();
     cx.save();
     cx.translate(c,c); cx.rotate(s+Math.PI/6);
     cx.translate(r*.64,0); cx.rotate(Math.PI/2);
-    cx.fillStyle = "#fff"; cx.font = "bold 19px sans-serif";
-    cx.textAlign = "center"; cx.textBaseline = "middle";
+    cx.fillStyle="#fff"; cx.font="bold 19px sans-serif";
+    cx.textAlign="center"; cx.textBaseline="middle";
     cx.fillText(String(i),0,0);
     cx.restore();
   }
   cx.beginPath(); cx.arc(c,c,12,0,Math.PI*2);
-  cx.fillStyle = "#0d0d0d"; cx.fill();
-  cx.strokeStyle = "#f0b90b"; cx.lineWidth = 2; cx.stroke();
+  cx.fillStyle="#0d0d0d"; cx.fill();
+  cx.strokeStyle="#f0b90b"; cx.lineWidth=2; cx.stroke();
 }
 
 function spinTo(target, cb){
-  const slice = Math.PI*2/6, spins = 5;
-  const tgt   = -Math.PI/2 - (target*slice + slice/2);
-  const total = Math.PI*2*spins + ((tgt-wAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
-  const dur   = 3800, t0 = performance.now(), sa = wAngle;
+  const slice=Math.PI*2/6, spins=5;
+  const tgt=-Math.PI/2-(target*slice+slice/2);
+  const total=Math.PI*2*spins+((tgt-wAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  const dur=3800, t0=performance.now(), sa=wAngle;
   function fr(now){
-    const t = Math.min((now-t0)/dur, 1);
-    const e = 1 - Math.pow(1-t, 4);
-    wAngle  = sa + total*e;
-    drawW(wAngle);
-    if(t < 1) wAnimId = requestAnimationFrame(fr);
-    else{ wAngle = sa+total; drawW(wAngle); if(cb) cb(); }
+    const t=Math.min((now-t0)/dur,1);
+    const e=1-Math.pow(1-t,4);
+    wAngle=sa+total*e; drawW(wAngle);
+    if(t<1) wAnimId=requestAnimationFrame(fr);
+    else{ wAngle=sa+total; drawW(wAngle); if(cb) cb(); }
   }
-  wAnimId = requestAnimationFrame(fr);
+  wAnimId=requestAnimationFrame(fr);
 }
 
 function animateWheel(win){
-  switchPanel("wheel");            // CHEF : affiche la roue
+  switchPanel("wheel");
   drawW(wAngle);
-  document.getElementById("wnum").style.opacity = "0";
+  document.getElementById("wnum").style.opacity="0";
   setTimeout(()=>{
     spinTo(win, ()=>{
-      // Roue arrêtée → affiche le numéro
-      const el = document.getElementById("wnum");
-      el.textContent  = win;
-      el.style.color  = NC[win];
-      el.style.opacity= "1";
-      setTimeout(()=>{ showPodiumResult(win); },800);
+      const el=document.getElementById("wnum");
+      el.textContent=win; el.style.color=NC[win]; el.style.opacity="1";
+      setTimeout(()=>showPodiumResult(win), 800);
     });
   }, 350);
 }
 
 function showPodiumResult(win){
-  switchPanel("pod");              // CHEF : affiche le podium
-  document.getElementById("pod-num").textContent = win;
-  document.getElementById("pod-num").style.color = NC[win];
-  document.getElementById("pod-sub").textContent = "Résultats du tour " + (new Date().toLocaleTimeString());
-
-  const last   = histFull[0];
-  const wlist  = document.getElementById("winners");
-  wlist.innerHTML = "";
-
+  switchPanel("pod");
+  document.getElementById("pod-num").textContent=win;
+  document.getElementById("pod-num").style.color=NC[win];
+  document.getElementById("pod-sub").textContent="Résultats du tour "+new Date().toLocaleTimeString();
+  const last=histFull[0];
+  const wlist=document.getElementById("winners");
+  wlist.innerHTML="";
   if(last && last.winner_name){
-    const c = document.createElement("div");
-    c.className = "wcard" + (last.winner_uid ? " real" : "");
-    c.innerHTML = `
+    const c=document.createElement("div");
+    c.className="wcard"+(last.winner_uid?" real":"");
+    c.innerHTML=`
       <div class="wcard-medal">🥇</div>
       <div>
         <div class="wcard-name">${last.winner_name}</div>
         <div class="wcard-det">
-          Solde: ${last.winner_solde ? Math.round(last.winner_solde).toLocaleString() : "—"} XAF
+          Solde: ${last.winner_solde?Math.round(last.winner_solde).toLocaleString():"—"} XAF
           &nbsp;·&nbsp; N°${win}
-          &nbsp;·&nbsp; ${(last.total_players||0)} joueurs
+          &nbsp;·&nbsp; ${last.total_players||0} joueurs
         </div>
       </div>`;
     wlist.appendChild(c);
   } else {
-    wlist.innerHTML = `<div style="color:#333;font-size:.78rem;padding:.75rem">Aucun gagnant ce tour</div>`;
+    wlist.innerHTML=`<div style="color:#333;font-size:.78rem;padding:.75rem">Aucun gagnant ce tour</div>`;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  TABLE DES MISES
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function addRow(p, prepend=false){
-  const body = document.getElementById("bscroll");
-  const row  = document.createElement("div");
-  row.className = "brow" + (p.real ? " real" : "");
-  const nb  = `<span class="nb2" style="background:${NC[p.num||0]}">${p.num||0}</span>`;
-  const flag= p.flag || "🌍";
-  const nom = p.real ? ("⭐ " + p.name) : (p.name || "—");
-  row.innerHTML = `
+  const body=document.getElementById("bscroll");
+  const row=document.createElement("div");
+  row.className="brow"+(p.real?" real":"");
+  const nb=`<span class="nb2" style="background:${NC[p.num||0]}">${p.num||0}</span>`;
+  const flag=p.flag||"🌍";
+  const nom=p.real?("⭐ "+p.name):(p.name||"—");
+  row.innerHTML=`
     <div class="pcell">
       <span style="font-size:13px;flex-shrink:0">${flag}</span>
       <span class="pn">${nom}</span>
@@ -749,142 +690,116 @@ function addRow(p, prepend=false){
     <div class="nc">${nb}</div>`;
   if(prepend && body.firstChild) body.insertBefore(row, body.firstChild);
   else body.appendChild(row);
-  if(!prepend) body.scrollTop = body.scrollHeight;
-  totalMise   += (p.mise||0);
-  totalJoueurs++;
-  document.getElementById("totalmise").textContent =
-    Math.round(totalMise).toLocaleString();
+  if(!prepend) body.scrollTop=body.scrollHeight;
+  totalMise+=(p.mise||0); totalJoueurs++;
+  document.getElementById("totalmise").textContent=Math.round(totalMise).toLocaleString();
 }
 
 function resetTable(){
-  document.getElementById("bscroll").innerHTML = "";
-  totalMise = 0; totalJoueurs = 0;
-  document.getElementById("totalmise").textContent = "0";
-  document.getElementById("pcount").textContent    = "0";
+  document.getElementById("bscroll").innerHTML="";
+  totalMise=0; totalJoueurs=0;
+  document.getElementById("totalmise").textContent="0";
+  document.getElementById("pcount").textContent="0";
 }
 
-// ═══════════════════════════════════════════════════════════
-//  HISTBAR — rendu depuis PostgreSQL (histFull)
-//  Même source que /historique sur Telegram
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  HISTBAR (source PostgreSQL)
+// ═══════════════════════════════════════════════════════
 function renderHist(){
-  const container = document.getElementById("hnums");
-  if(!hist || !hist.length){
-    container.innerHTML = `<span style="font-size:.6rem;color:#2a2a2a">Aucun tirage</span>`;
-    return;
+  const container=document.getElementById("hnums");
+  if(!hist||!hist.length){
+    container.innerHTML=`<span style="font-size:.6rem;color:#2a2a2a">Aucun tirage</span>`; return;
   }
-  container.innerHTML = hist.slice(0,20).map((n,i)=>{
-    const h   = histFull[i] || {};
-    const nom = h.winner_name  || "";
-    const sol = h.winner_solde ? Math.round(h.winner_solde).toLocaleString()+" XAF" : "";
-    const hr  = h.heure        || "";
-    const tip = nom
-      ? `<span class="hn-tip">${nom}${sol?" — "+sol:""}&nbsp;${hr}</span>`
-      : "";
+  container.innerHTML=hist.slice(0,20).map((n,i)=>{
+    const h=histFull[i]||{};
+    const nom=h.winner_name||"";
+    const sol=h.winner_solde?Math.round(h.winner_solde).toLocaleString()+" XAF":"";
+    const hr=h.heure||"";
+    const tip=nom?`<span class="hn-tip">${nom}${sol?" — "+sol:""}&nbsp;${hr}</span>`:"";
     return `<div class="hn" style="background:${NC[n]}">${n}${tip}</div>`;
   }).join("");
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  SOLDE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function fmtBal(){
-  document.getElementById("bal").textContent =
-    Math.round(bal).toLocaleString() + " XAF";
+  document.getElementById("bal").textContent=Math.round(bal).toLocaleString()+" XAF";
 }
 
-// ═══════════════════════════════════════════════════════════
-//  MISE (envoyée au bot — validation serveur)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  MISE
+// ═══════════════════════════════════════════════════════
 function selNum(n){
-  selectedNum = n;
+  selectedNum=n;
   for(let i=0;i<6;i++){
-    const el = document.getElementById("ng"+i);
+    const el=document.getElementById("ng"+i);
     if(el) el.classList.toggle("sel", i===n);
   }
 }
 
 async function validerMise(){
-  const errEl = document.getElementById("merr");
-  if(selectedNum < 0){
-    errEl.textContent = "Choisissez un numéro (0–5)";
-    errEl.className   = "oerr err"; return;
-  }
-  const inp = parseInt(document.getElementById("mise-inp").value) || 0;
-  if(inp < 1){   errEl.textContent="Minimum 1 XAF";   errEl.className="oerr err"; return; }
-  if(inp > 500){ errEl.textContent="Maximum 500 XAF"; errEl.className="oerr err"; return; }
-  if(inp > bal){ errEl.textContent="Solde insuffisant";errEl.className="oerr err"; return; }
-  errEl.textContent="Envoi au serveur..."; errEl.className="oerr";
-
+  const errEl=document.getElementById("merr");
+  if(selectedNum<0){ errEl.textContent="Choisissez un numéro (0–5)"; errEl.className="oerr err"; return; }
+  const inp=parseInt(document.getElementById("mise-inp").value)||0;
+  if(inp<1){   errEl.textContent="Minimum 1 XAF";   errEl.className="oerr err"; return; }
+  if(inp>1000){errEl.textContent="Maximum 1000 XAF"; errEl.className="oerr err"; return; }
+  if(inp>bal){ errEl.textContent="Solde insuffisant";errEl.className="oerr err"; return; }
+  errEl.textContent="Envoi..."; errEl.className="oerr";
   try{
-    const res  = await fetch(`${API}/api/mise`, {
-      method : "POST",
-      headers: {"Content-Type":"application/json",
-                "ngrok-skip-browser-warning":"true"},
-      body   : JSON.stringify({user_id:userId, pin:userPin, mise:inp, numero:selectedNum})
+    const res=await fetch(`${API}/api/mise`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
+      body:JSON.stringify({user_id:userId,pin:userPin,mise:inp,numero:selectedNum})
     });
-    const data = await res.json();
+    const data=await res.json();
     if(data.success){
-      bal = data.new_solde;
-      fmtBal();
-      closeOv();
-      addRow({flag:"🇨🇲", name:"Vous", mise:inp, num:selectedNum, real:true}, true);
-      showBanner(`Mise de ${inp} XAF sur N°${selectedNum} enregistrée !`, "#f0b90b");
+      bal=data.new_solde; fmtBal(); closeOv();
+      addRow({flag:"🇨🇲",name:"Vous",mise:inp,num:selectedNum,real:true},true);
+      showBanner(`✅ Mise de ${inp} XAF sur N°${selectedNum} !`,"#f0b90b");
     } else {
-      errEl.textContent = data.message; errEl.className="oerr err";
+      errEl.textContent=data.message; errEl.className="oerr err";
     }
-  } catch(e){
-    errEl.textContent = "Erreur serveur"; errEl.className="oerr err";
-  }
+  }catch(e){ errEl.textContent="Erreur serveur"; errEl.className="oerr err"; }
 }
 
-// ═══════════════════════════════════════════════════════════
-//  PANNEAUX OVERLAY (HISTO / MISE / BANQUE / AMIS)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  PANNEAUX OVERLAY
+// ═══════════════════════════════════════════════════════
 function openPanel(type){
-  const ov  = document.getElementById("ov");
-  const box = document.getElementById("ovbox");
-  ov.style.display = "flex";
+  const ov=document.getElementById("ov");
+  const box=document.getElementById("ovbox");
+  ov.style.display="flex";
 
-  // ── Historique (source PostgreSQL — identique à /historique Telegram) ──
-  if(type === "histo"){
-    const rows = histFull.slice(0,20).map(h=>{
-      const n   = h.numero;
-      const nom = h.winner_name  || "—";
-      const sol = h.winner_solde ? Math.round(h.winner_solde).toLocaleString()+" XAF" : "—";
-      const hr  = h.heure        || "";
+  if(type==="histo"){
+    const rows=histFull.slice(0,20).map(h=>{
+      const n=h.numero, nom=h.winner_name||"—";
+      const sol=h.winner_solde?Math.round(h.winner_solde).toLocaleString()+" XAF":"—";
+      const hr=h.heure||"";
       return `<div class="hist-row">
         <div class="hbadge" style="background:${NC[n]}">${n}</div>
-        <div class="hinfo">
-          <div class="hname">${nom}</div>
-          <div class="hsolde">${sol}</div>
-        </div>
+        <div class="hinfo"><div class="hname">${nom}</div><div class="hsolde">${sol}</div></div>
         <div class="heure">${hr}</div>
       </div>`;
-    }).join("") || `<div style="color:#333;font-size:.75rem;text-align:center;padding:1rem">Aucun tirage encore</div>`;
-
-    box.innerHTML = `
-      <div class="otitle">📊 Historique des tirages</div>
-      <div style="font-size:.62rem;color:#2a2a2a;margin-bottom:.5rem;text-align:center">
-        Synchronisé avec PostgreSQL — même source que Telegram
-      </div>
-      ${rows}`;
+    }).join("")||`<div style="color:#333;font-size:.75rem;text-align:center;padding:1rem">Aucun tirage encore</div>`;
+    box.innerHTML=`<div class="otitle">📊 Historique des tirages</div>${rows}`;
   }
 
-  // ── Mise ──
-  else if(type === "mise"){
-    selectedNum = -1;
-    box.innerHTML = `
+  else if(type==="mise"){
+    selectedNum=-1;
+    // Badge Predictor si actif
+    const predBadge = predictorActive
+      ? `<div class="pred-badge" onclick="openPanel('predictor')">🔮 PREDICTOR ACTIF — Prédire le prochain numéro</div>`
+      : "";
+    box.innerHTML=`
       <div class="otitle">💰 Placer une mise</div>
+      ${predBadge}
       <div style="font-size:.72rem;color:#444;margin-bottom:.4rem">Choisissez un numéro (0–5)</div>
       <div class="numgrid">
-        ${[0,1,2,3,4,5].map(n=>
-          `<div class="ngb" style="background:${NC[n]}" onclick="selNum(${n})" id="ng${n}">${n}</div>`
-        ).join("")}
+        ${[0,1,2,3,4,5].map(n=>`<div class="ngb" style="background:${NC[n]}" onclick="selNum(${n})" id="ng${n}">${n}</div>`).join("")}
       </div>
-      <div style="font-size:.72rem;color:#444;margin:.4rem 0 .2rem">Montant (1–500 XAF)</div>
-      <input class="inp" id="mise-inp" type="number" min="1" max="500"
-             placeholder="Ex: 100" inputmode="numeric">
+      <div style="font-size:.72rem;color:#444;margin:.4rem 0 .2rem">Montant (1–1000 XAF)</div>
+      <input class="inp" id="mise-inp" type="number" min="1" max="1000" placeholder="Ex: 100" inputmode="numeric">
       <div class="oerr err" id="merr"></div>
       <div style="font-size:.68rem;color:#333;margin-bottom:.4rem">
         Solde: <span style="color:#f0b90b">${Math.round(bal).toLocaleString()} XAF</span>
@@ -892,22 +807,16 @@ function openPanel(type){
       <button class="obtn" onclick="validerMise()">Confirmer la mise</button>`;
   }
 
-  // ── Banque ──
-  else if(type === "banque"){
-    bankTab = "depot";
-    renderBank(box);
+  else if(type==="banque"){
+    bankTab="depot"; renderBank(box);
   }
 
-  // ── Amis / Parrainage ──
-  else if(type === "amis"){
-    const lien = `https://t.me/NkapExpressBot?start=ref_${userId}`;
-    box.innerHTML = `
+  else if(type==="amis"){
+    const lien=`https://t.me/NkapExpressBot?start=ref_${userId}`;
+    box.innerHTML=`
       <div class="otitle">👥 Parrainage</div>
       <div style="font-size:.72rem;color:#444;margin-bottom:.4rem">Votre lien unique</div>
-      <div style="background:#181818;border:1px solid #1e1e1e;border-radius:8px;
-                  padding:.65rem;font-size:.68rem;color:#555;margin-bottom:.6rem;word-break:break-all">
-        ${lien}
-      </div>
+      <div style="background:#181818;border:1px solid #1e1e1e;border-radius:8px;padding:.65rem;font-size:.68rem;color:#555;margin-bottom:.6rem;word-break:break-all">${lien}</div>
       <button class="obtn" onclick="copyLink('${lien}')">📋 Copier le lien</button>
       <div class="divider"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="par-stats">
@@ -920,182 +829,224 @@ function openPanel(type){
           <div style="font-size:.62rem;color:#333">Bonus gagné</div>
         </div>
       </div>
-      <div class="info-box">
-        Chaque ami qui s'inscrit via votre lien vous rapporte <b style="color:#f0b90b">+250 XAF</b> 
-        et il reçoit <b style="color:#f0b90b">+100 XAF</b> de bienvenue.
-      </div>`;
-    // Charge les stats de parrainage depuis le bot
-    fetch(`${API}/api/parrainage?user_id=${userId}`,
-          {headers:{"ngrok-skip-browser-warning":"true"}})
+      <div class="info-box">Chaque ami inscrit = <b style="color:#f0b90b">+250 XAF</b> pour vous + <b style="color:#f0b90b">+100 XAF</b> pour lui.</div>`;
+    fetch(`${API}/api/parrainage?user_id=${userId}`,{headers:{"ngrok-skip-browser-warning":"true"}})
       .then(r=>r.json())
       .then(d=>{
         if(d.success){
-          document.getElementById("nb-fil").textContent  = d.filleuls;
-          document.getElementById("bon-fil").textContent =
-            Math.round(d.bonus_total).toLocaleString()+" XAF";
+          document.getElementById("nb-fil").textContent=d.filleuls;
+          document.getElementById("bon-fil").textContent=Math.round(d.bonus_total).toLocaleString()+" XAF";
         }
       }).catch(()=>{});
+  }
+
+  else if(type==="predictor"){
+    // Panneau Predictor (actif seulement après 50 joueurs)
+    if(!predictorActive){
+      box.innerHTML=`<div class="otitle">🔮 Predictor</div>
+        <div class="info-box" style="text-align:center;color:#555">
+          Le Predictor s'active après 50 joueurs inscrits.<br>
+          Dites à vos amis de rejoindre !
+        </div>`;
+      return;
+    }
+    box.innerHTML=`
+      <div class="otitle">🔮 PREDICTOR NKAP</div>
+      <div style="font-size:.7rem;color:#555;text-align:center;margin-bottom:.8rem">Choisissez votre niveau de prédiction</div>
+
+      <div style="background:#111;border:1px solid #7c3aed44;border-radius:10px;padding:.8rem;margin-bottom:.6rem;cursor:pointer" onclick="acheterPredictor('guide')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;color:#a78bfa">🎯 Guide</div>
+            <div style="font-size:.65rem;color:#555">Probabilité 50–80%</div>
+          </div>
+          <div style="color:#f0b90b;font-weight:700">200 XAF</div>
+        </div>
+      </div>
+
+      <div style="background:#111;border:1px solid #f59e0b44;border-radius:10px;padding:.8rem;margin-bottom:.6rem;cursor:pointer" onclick="acheterPredictor('expert')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;color:#fbbf24">⚡ Expert</div>
+            <div style="font-size:.65rem;color:#555">Probabilité 90%</div>
+          </div>
+          <div style="color:#f0b90b;font-weight:700">10 000 XAF</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#1a0a00,#0a0010);border:1px solid #f0b90b;border-radius:10px;padding:.8rem;cursor:pointer" onclick="acheterPredictor('imperial')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;color:#f0b90b">👑 Impérial</div>
+            <div style="font-size:.65rem;color:#888">Numéro garanti 100%</div>
+          </div>
+          <div style="color:#f0b90b;font-weight:700">100 000 XAF</div>
+        </div>
+      </div>
+
+      <div class="oerr" id="pred-err" style="margin-top:.6rem;text-align:center"></div>
+      <div class="info-box" style="margin-top:.5rem">Le Predictor analyse les tendances des 20 derniers tirages pour vous donner un avantage statistique.</div>`;
+  }
+}
+
+// ── Achat Predictor (logique client simple) ────────────
+async function acheterPredictor(offre){
+  const errEl=document.getElementById("pred-err");
+  const prix = offre==="guide"?200:offre==="expert"?10000:100000;
+  if(bal<prix){ errEl.textContent=`Solde insuffisant (${Math.round(bal)} XAF disponible)`; errEl.className="oerr err"; return; }
+  errEl.textContent="Calcul en cours..."; errEl.className="oerr";
+
+  // Analyse des 20 derniers numéros
+  const freq={0:0,1:0,2:0,3:0,4:0,5:0};
+  hist.forEach(n=>{ if(freq[n]!==undefined) freq[n]++; });
+  const sorted=Object.entries(freq).sort((a,b)=>a[1]-b[1]);
+  // Numéro le moins sorti = plus de chances statistiques
+  const prediction=parseInt(sorted[0][0]);
+
+  // Débit du solde
+  try{
+    const res=await fetch(`${API}/api/mise`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
+      body:JSON.stringify({user_id:userId,pin:userPin,mise:prix,numero:prediction})
+    });
+    const data=await res.json();
+    if(data.success){
+      // Mise automatique sur le numéro prédit
+      bal=data.new_solde; fmtBal();
+      closeOv();
+      addRow({flag:"🔮",name:`Predictor (${offre})`,mise:prix,num:prediction,real:true},true);
+      showBanner(`🔮 Predictor: N°${prediction} misé (${prix.toLocaleString()} XAF)!`,"#7c3aed");
+    } else {
+      errEl.textContent=data.message; errEl.className="oerr err";
+    }
+  }catch(e){
+    errEl.textContent="Erreur serveur"; errEl.className="oerr err";
   }
 }
 
 function renderBank(box){
-  box.innerHTML = `
+  box.innerHTML=`
     <div class="otitle">💳 Banque</div>
     <div class="tab2">
-      <div class="tabo${bankTab==="depot"?" active":""}"
-           onclick="bankTab='depot';renderBank(document.getElementById('ovbox'))">Dépôt</div>
-      <div class="tabo${bankTab==="retrait"?" active":""}"
-           onclick="bankTab='retrait';renderBank(document.getElementById('ovbox'))">Retrait</div>
+      <div class="tabo${bankTab==="depot"?" active":""}" onclick="bankTab='depot';renderBank(document.getElementById('ovbox'))">Dépôt</div>
+      <div class="tabo${bankTab==="retrait"?" active":""}" onclick="bankTab='retrait';renderBank(document.getElementById('ovbox'))">Retrait</div>
     </div>
-    ${bankTab==="depot" ? `
-      <div style="font-size:.72rem;color:#444;margin-bottom:.4rem">
-        Dépôt via Mobile Money (traitement manuel)
-      </div>
-      <input class="inp" type="number" id="dep-amount"
-             placeholder="Montant (min 100 XAF)" inputmode="numeric">
-      <input class="inp" type="tel" id="dep-tel"
-             placeholder="Votre numéro Mobile Money">
+    ${bankTab==="depot"?`
+      <div style="font-size:.72rem;color:#444;margin-bottom:.4rem">Dépôt via Mobile Money (traitement manuel)</div>
+      <input class="inp" type="number" id="dep-amount" placeholder="Montant (min 100 XAF)" inputmode="numeric">
+      <input class="inp" type="tel" id="dep-tel" placeholder="Votre numéro Mobile Money">
       <button class="obtn" onclick="initDepot()">Envoyer la demande</button>
-      <div class="info-box">
-        Envoyez le montant au numéro admin après confirmation.<br>
-        Crédit sous 5–15 min.
-      </div>
-    ` : `
+      <div class="info-box">Envoyez le montant au numéro admin après confirmation.<br>Crédit sous 5–15 min.</div>
+    `:`
       <div style="font-size:.72rem;color:#444;margin-bottom:.4rem">
         Solde disponible: <span style="color:#f0b90b">${Math.round(bal).toLocaleString()} XAF</span>
       </div>
-      <input class="inp" type="number" id="ret-amount"
-             placeholder="Montant (min 100 XAF)" inputmode="numeric">
-      <input class="inp" type="tel" id="ret-tel"
-             placeholder="Numéro Mobile Money">
+      <input class="inp" type="number" id="ret-amount" placeholder="Montant (min 100 XAF)" inputmode="numeric">
+      <input class="inp" type="tel" id="ret-tel" placeholder="Numéro Mobile Money">
       <button class="obtn" onclick="initRetrait()">Demander le retrait</button>
+      <div class="info-box">
+        ✅ &lt; 2 000 XAF : traitement automatique<br>
+        ⏳ ≥ 2 000 XAF : validation admin requise
+      </div>
     `}
     <div class="oerr" id="berr" style="margin-top:.5rem"></div>`;
 }
 
 async function initDepot(){
-  const v   = parseInt(document.getElementById("dep-amount").value) || 0;
-  const tel = document.getElementById("dep-tel").value.trim();
-  const err = document.getElementById("berr");
-  if(v < 100){ err.textContent="Minimum 100 XAF"; err.className="oerr err"; return; }
-  if(!tel){    err.textContent="Entrez votre numéro"; err.className="oerr err"; return; }
+  const v=parseInt(document.getElementById("dep-amount").value)||0;
+  const tel=document.getElementById("dep-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100){ err.textContent="Minimum 100 XAF"; err.className="oerr err"; return; }
+  if(!tel){  err.textContent="Entrez votre numéro"; err.className="oerr err"; return; }
   err.textContent="Envoi..."; err.className="oerr";
   try{
-    const res  = await fetch(`${API}/api/depot`, {
+    const res=await fetch(`${API}/api/depot`,{
       method:"POST",
       headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
       body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
     });
-    const d = await res.json();
-    err.textContent = d.message;
-    err.className   = d.success ? "oerr ok" : "oerr err";
-  } catch(e){ err.textContent="Erreur serveur"; err.className="oerr err"; }
+    const d=await res.json();
+    err.textContent=d.message;
+    err.className=d.success?"oerr ok":"oerr err";
+  }catch(e){ err.textContent="Erreur serveur"; err.className="oerr err"; }
 }
 
 async function initRetrait(){
-  const v   = parseInt(document.getElementById("ret-amount").value) || 0;
-  const tel = document.getElementById("ret-tel").value.trim();
-  const err = document.getElementById("berr");
-  if(v < 100)  { err.textContent="Minimum 100 XAF";   err.className="oerr err"; return; }
-  if(v > bal)  { err.textContent="Solde insuffisant";  err.className="oerr err"; return; }
-  if(!tel)     { err.textContent="Entrez votre numéro";err.className="oerr err"; return; }
+  const v=parseInt(document.getElementById("ret-amount").value)||0;
+  const tel=document.getElementById("ret-tel").value.trim();
+  const err=document.getElementById("berr");
+  if(v<100)  { err.textContent="Minimum 100 XAF";   err.className="oerr err"; return; }
+  if(v>bal)  { err.textContent="Solde insuffisant";  err.className="oerr err"; return; }
+  if(!tel)   { err.textContent="Entrez votre numéro";err.className="oerr err"; return; }
   err.textContent="Envoi..."; err.className="oerr";
   try{
-    const res  = await fetch(`${API}/api/retrait`, {
+    const res=await fetch(`${API}/api/retrait`,{
       method:"POST",
       headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
       body:JSON.stringify({user_id:userId,pin:userPin,montant:v,telephone:tel})
     });
-    const d = await res.json();
+    const d=await res.json();
     if(d.success){ bal=d.new_solde; fmtBal(); }
-    err.textContent = d.message;
-    err.className   = d.success ? "oerr ok" : "oerr err";
-  } catch(e){ err.textContent="Erreur serveur"; err.className="oerr err"; }
+    err.textContent=d.message;
+    err.className=d.success?"oerr ok":"oerr err";
+  }catch(e){ err.textContent="Erreur serveur"; err.className="oerr err"; }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  LEADERBOARD
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 async function showLB(){
   switchPanel("lb");
   document.getElementById("nav-top").classList.add("active");
-  const rows = document.getElementById("lb-rows");
-  rows.innerHTML = `<div style="color:#2a2a2a;text-align:center;padding:1rem;font-size:.75rem">Chargement...</div>`;
+  const rows=document.getElementById("lb-rows");
+  rows.innerHTML=`<div style="color:#2a2a2a;text-align:center;padding:1rem;font-size:.75rem">Chargement...</div>`;
   try{
-    const r    = await fetch(`${API}/api/leaderboard`,
-                             {headers:{"ngrok-skip-browser-warning":"true"}});
-    const data = await r.json();
+    const r=await fetch(`${API}/api/leaderboard`,{headers:{"ngrok-skip-browser-warning":"true"}});
+    const data=await r.json();
     if(!data.length){
-      rows.innerHTML=`<div style="color:#333;font-size:.75rem;text-align:center;padding:1rem">
-        Aucun gagnant aujourd'hui encore.</div>`;
+      rows.innerHTML=`<div style="color:#333;font-size:.75rem;text-align:center;padding:1rem">Aucun gagnant aujourd'hui encore.</div>`;
       return;
     }
     rows.innerHTML="";
     data.forEach((p,i)=>{
-      const d   = document.createElement("div");
-      d.className = "lb-row";
-      const nom = p.custom_name || p.tg_name || "?";
-      d.innerHTML = `
-        <span class="lb-rank">${MEDALS[i]||i+1}</span>
-        <span class="lb-name">${nom}</span>
-        <span class="lb-gain">${Math.round(p.gains_jour).toLocaleString()} XAF</span>`;
+      const d=document.createElement("div");
+      d.className="lb-row";
+      const nom=p.custom_name||p.tg_name||"?";
+      d.innerHTML=`<span class="lb-rank">${MEDALS[i]||i+1}</span><span class="lb-name">${nom}</span><span class="lb-gain">${Math.round(p.gains_jour).toLocaleString()} XAF</span>`;
       rows.appendChild(d);
     });
-  } catch(e){
+  }catch(e){
     rows.innerHTML=`<div style="color:#ef4444;font-size:.72rem;text-align:center">Erreur de chargement</div>`;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  UTILITAIRES
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function copyLink(lien){
   navigator.clipboard.writeText(lien).catch(()=>{});
-  showBanner("Lien copié !", "#f0b90b");
+  showBanner("📋 Lien copié !", "#f0b90b");
 }
 
 function showBanner(msg, col){
-  const b = document.createElement("div");
-  b.className       = "banner-msg";
-  b.style.background= col;
-  b.style.color     = "#0a0a0a";
-  b.textContent     = msg;
+  const b=document.createElement("div");
+  b.className="banner-msg";
+  b.style.background=col; b.style.color="#0a0a0a";
+  b.textContent=msg;
   document.getElementById("NK").appendChild(b);
   setTimeout(()=>b.remove(), 3000);
 }
 
 function closeOv(){
-  document.getElementById("ov").style.display = "none";
+  document.getElementById("ov").style.display="none";
 }
 document.getElementById("ov").addEventListener("click", function(e){
-  if(e.target === this) closeOv();
+  if(e.target===this) closeOv();
 });
 
-// ── Init roue dès le chargement
+// ── Init roue
 drawW(0);
-  // CONFIGURATION EMPIRE RAILWAY
-const API_URL = window.location.origin + "/api";
-
-async function checkServer() {
-    try {
-        const response = await fetch(API_URL + "/server_status");
-        const data = await response.json();
-        
-        if (data.status === "online" || data.ok) {
-            // Si le serveur répond, on cache l'écran de verrouillage
-            document.getElementById('srv-lock').style.display = 'none';
-            document.getElementById('auth').style.display = 'flex';
-            console.log("✅ Connexion à l'Empire réussie !");
-        }
-    } catch (error) {
-        console.log("⏳ En attente du signal Railway...");
-    }
-}
-
-// On vérifie la connexion toutes les 2 secondes
-setInterval(checkServer, 2000);
-checkServer();
-
 </script>
 </body>
 </html>
