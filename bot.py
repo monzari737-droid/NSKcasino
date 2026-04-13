@@ -52,7 +52,27 @@ log = logging.getLogger("NkapBot")
 
 bot = telebot.TeleBot(BOT_TOKEN, parse_mode="HTML", threaded=True, num_threads=8)
 app = Flask(__name__)
+# ... tes imports et ta config 
 
+# --- COLLE LE CODE ICI ---
+@app.route('/' + BOT_TOKEN, methods=['POST'])
+def telegram_webhook():
+    if freq.headers.get('content-type') == 'application/json':
+        json_string = freq.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return '', 200
+    else:
+        abort(403)
+
+@app.route('/')
+def index():
+    webhook_url = f"https://railway.app{BOT_TOKEN}"
+    bot.remove_webhook()
+    time.sleep(0.1)
+    bot.set_webhook(url=webhook_url)
+    return "<h1>✅ NKAP EXPRESS - Bot & API Connectés</h1>", 200
+# --- FIN DU CODE ---
 # ── Callback de notification ──────────────────────────────
 def notify(uid: int, msg: str):
     try:
@@ -1344,5 +1364,7 @@ def index():
     bot.set_webhook(url=f"https://railway.app{TOKEN}")
     return "<h1>✅ NSK Casino est en ligne</h1>", 200
 
-
+# À la toute fin, laisse juste ça :
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(FLASK_PORT))
    
