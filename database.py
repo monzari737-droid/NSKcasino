@@ -672,4 +672,36 @@ def get_admin_stats() -> dict:
         "parrainages":      parrainages,
         "depots_attente":   depots_attente,
         "retraits_attente": retraits_attente,
-    }
+    }def generate_pin():
+    """Génère un code PIN unique de 5 chiffres."""
+    return str(random.randint(10000, 99999))
+
+def hash_pin(pin):
+    """Sécurise le PIN avec un sel."""
+    return hashlib.sha256((pin + SECRET_SALT).encode()).encode().hex()
+
+def verify_pin(user_id, pin_entre):
+    """Vérifie le PIN et gère le blocage (lockout)."""
+    # Vérifier d'abord si l'utilisateur est bloqué dans Redis
+    lock_key = f"lockout:{user_id}"
+    if r().exists(lock_key):
+        return {"ok": False, "message": "Compte bloqué. Réessayez plus tard.", "lockout_secs": r().ttl(lock_key)}
+
+    with pg() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute("SELECT pin_hash FROM users WHERE user_id = %s", (user_id,))
+            res = cur.fetchone()
+            if not res:
+                return {"ok": False, "message": "Utilisateur non trouvé."}
+            
+            if hash_pin(pin_entre) == res['pin_hash']:
+                r().delete(f"tries:{user_id}")
+                return {"ok": True}
+            else:
+                # Logique de blocage : 3 essais
+                tries = r().incr(f"tries:{user_id}")
+                if tries >= 3:
+                    r().setex(lock_key, 3600, "blocked") # Bloqué 1h
+                    return {"ok": False, "message": "Trop d'échecs. Bloqué pour 1 heure."}
+                return {"ok": False, "message": f"Code incorrect. Essai {tries}/3."}
+
