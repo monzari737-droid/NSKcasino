@@ -672,36 +672,84 @@ def get_admin_stats() -> dict:
         "parrainages":      parrainages,
         "depots_attente":   depots_attente,
         "retraits_attente": retraits_attente,
-    def generate_pin():
-    """Génère un code PIN unique de 5 chiffres."""
+    }
+
+
+
+    
+
+# ═══════════════════════════════════════════════════════
+#  FONCTIONS DE SÉCURITÉ PIN & AUTH
+# ═══════════════════════════════════════════════════════
+#  FONCTIONS DE SÉCURITÉ PIN & AUTH
+# ═══════════════════════════════════════════════════════
+
+def generate_pin():
+    """Génère un code secret de 5 chiffres pour le joueur."""
     return str(random.randint(10000, 99999))
 
 def hash_pin(pin):
-    """Sécurise le PIN avec un sel."""
-    return hashlib.sha256((pin + SECRET_SALT).encode()).encode().hex()
+    """Hache le PIN avec le sel de sécurité."""
+    return hashlib.sha256((str(pin) + SECRET_SALT).encode()).hexdigest()
 
 def verify_pin(user_id, pin_entre):
-    """Vérifie le PIN et gère le blocage (lockout)."""
-    # Vérifier d'abord si l'utilisateur est bloqué dans Redis
+    """Vérifie le PIN et gère le blocage après 3 échecs."""
     lock_key = f"lockout:{user_id}"
-    if r().exists(lock_key):
-        return {"ok": False, "message": "Compte bloqué. Réessayez plus tard.", "lockout_secs": r().ttl(lock_key)}
+    
+    # Vérifier si le compte est bloqué dans Redis
+    lock_time = r().get(lock_key)
+    if lock_time:
+        ttl = r().ttl(lock_key)
+        return {"ok": False, "message": f"Compte bloqué. Réessayez dans {ttl // 60} min.", "lockout_secs": ttl}
 
     with pg() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute("SELECT pin_hash FROM users WHERE user_id = %s", (user_id,))
             res = cur.fetchone()
+            
             if not res:
                 return {"ok": False, "message": "Utilisateur non trouvé."}
             
             if hash_pin(pin_entre) == res['pin_hash']:
-                r().delete(f"tries:{user_id}")
+                r().delete(f"tries:{user_id}") 
                 return {"ok": True}
             else:
-                # Logique de blocage : 3 essais
                 tries = r().incr(f"tries:{user_id}")
+                if tries == 1:
+                    r().expire(f"tries:{user_id}", 3600)
+                
                 if tries >= 3:
-                    r().setex(lock_key, 3600, "blocked") # Bloqué 1h
-                    return {"ok": False, "message": "Trop d'échecs. Bloqué pour 1 heure."}
+                    r().setex(lock_key, 3600, "locked")
+                    return {"ok": False, "message": "3 échecs. Compte bloqué pour 1h."}
+                
                 return {"ok": False, "message": f"Code incorrect. Essai {tries}/3."}
 
+def create_user(user_id, username, tg_name, pin, parrain_id=None):
+    """Crée un nouvel utilisateur avec son PIN généré."""
+    p_hash = hash_pin(pin)
+    try:
+        with pg() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO users (user_id, username, tg_name, pin_hash, solde, parrain_id)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (user_id) DO UPDATE 
+                    SET last_seen = NOW()
+                """, (user_id, username, tg_name, p_hash, BONUS_BIENVENUE, parrain_id))
+        return True
+    except Exception as e:
+        log.error(f"Erreur création user: {e}")
+        return False
+
+def get_user(user_id):
+    """Récupère les infos d'un utilisateur."""
+    with pg() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
+            return cur.fetchone()
+
+def update_solde(user_id, montant):
+    """Modifie le solde (positif pour gain, négatif pour mise)."""
+    with pg() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE users SET solde = solde + %s WHERE user_id = %s", (montant, user_id))
