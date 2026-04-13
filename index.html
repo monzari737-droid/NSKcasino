@@ -1073,6 +1073,29 @@ document.getElementById("ov").addEventListener("click", function(e){
 
 // ── Init roue dès le chargement
 drawW(0);
+  // CONFIGURATION EMPIRE RAILWAY
+const API_URL = window.location.origin + "/api";
+
+async function checkServer() {
+    try {
+        const response = await fetch(API_URL + "/server_status");
+        const data = await response.json();
+        
+        if (data.status === "online" || data.ok) {
+            // Si le serveur répond, on cache l'écran de verrouillage
+            document.getElementById('srv-lock').style.display = 'none';
+            document.getElementById('auth').style.display = 'flex';
+            console.log("✅ Connexion à l'Empire réussie !");
+        }
+    } catch (error) {
+        console.log("⏳ En attente du signal Railway...");
+    }
+}
+
+// On vérifie la connexion toutes les 2 secondes
+setInterval(checkServer, 2000);
+checkServer();
+
 </script>
 </body>
 </html>
